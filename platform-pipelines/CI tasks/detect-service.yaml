@@ -1,0 +1,28 @@
+name: Detect Services
+
+on:
+  workflow_call:
+    outputs:
+      services:
+        value: ${{ jobs.detect.outputs.services }}
+
+jobs:
+
+  detect:
+
+    runs-on: ubuntu-latest
+
+    outputs:
+      services: ${{ steps.services.outputs.services }}
+
+    steps:
+
+    - uses: actions/checkout@v4
+
+    - name: Find services
+      id: services
+      run: |
+
+        services=$(find . -name Dockerfile | awk -F/ '{print $2}' | jq -R -s -c 'split("\n")[:-1]')
+
+        echo "services=$services" >> $GITHUB_OUTPUT

@@ -1,0 +1,59 @@
+name: Build Service
+
+on:
+  workflow_call:
+
+    inputs:
+      service:
+        required: true
+        type: string
+      image_tag:
+        required: false
+        type: string
+        default: ${{ github.sha }}
+
+    outputs:
+      image:
+        value: ${{ jobs.build.outputs.image }}
+      image_artifact:
+        value: ${{ jobs.build.outputs.image_artifact }}
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    outputs:
+      image: ${{ steps.meta.outputs.image }}
+      image_artifact: ${{ steps.meta.outputs.image_artifact }}
+
+    steps:
+
+    - uses: actions/checkout@v4
+
+    - name: Image metadata
+      id: meta
+      run: |
+        image="local/${{ inputs.service }}:${{ inputs.image_tag }}"
+        image_artifact="image-${{ inputs.service }}-${{ inputs.image_tag }}"
+        echo "image=$image" >> "$GITHUB_OUTPUT"
+        echo "image_artifact=$image_artifact" >> "$GITHUB_OUTPUT"
+
+    - name: Build image
+      run: |
+
+        docker build \
+          -f ${{ inputs.service }}/Dockerfile \
+          -t local/${{ inputs.service }}:${{ inputs.image_tag }} \
+          .
+
+    - name: Save image
+      run: |
+        docker save "local/${{ inputs.service }}:${{ inputs.image_tag }}" -o image.tar
+
+    - name: Upload image artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.meta.outputs.image_artifact }}
+        path: image.tar

@@ -1,0 +1,53 @@
+name: Update GitOps
+
+on:
+  workflow_call:
+
+    inputs:
+      service:
+        required: true
+        type: string
+      image_tag:
+        required: true
+        type: string
+      gitops_repo:
+        required: false
+        type: string
+        default: ${{ github.repository }}
+
+    secrets:
+      GH_TOKEN:
+        required: true
+
+jobs:
+
+  update:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.gitops_repo }}
+        token: ${{ secrets.GH_TOKEN }}
+
+    - name: Install yq
+      uses: mikefarah/yq@v4.44.3
+
+    - name: Update Helm values
+      run: |
+
+        yq -i \
+        '.image.tag="${{ inputs.image_tag }}"' \
+        platform-helm/charts/${{ inputs.service }}/values-preview.yaml
+
+    - name: Commit
+      run: |
+
+        git config user.name github-actions
+        git config user.email actions@github.com
+
+        git add .
+        git commit -m "update image for preview"
+        git push
