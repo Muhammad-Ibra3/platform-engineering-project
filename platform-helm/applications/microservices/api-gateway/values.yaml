@@ -1,0 +1,31 @@
+# This is the base values chart for the api-gateway microservice.
+# For environment-specific overrides, see the files in the envs directory.
+
+nameOverride: "api-gateway"
+fullnameOverride: "api-gateway"
+
+replicaCount: 1
+image:
+  repository: your-dockerhub-user/api-gateway
+  tag: "latest"
+  pullPolicy: Always
+
+service:
+  type: NodePort
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+
+ingress:
+  # Ingress is disabled by default. Enable and configure in environment-specific overrides as needed.
+  enabled: false 
+
+probes:
+  liveness:
+    path: /health
+    port: 8080
+
+# NOTE: Environment variables are not declared in this base file—
+# instead, declare them as needed in the environment-specific override files.
+# Resource requests and limits are required and must also be specified in the env-specific values files.

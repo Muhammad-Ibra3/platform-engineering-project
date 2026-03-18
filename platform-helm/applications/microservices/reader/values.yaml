@@ -1,0 +1,27 @@
+# This is the base values chart for the reader microservice.
+# For environment-specific overrides, see the files in the envs directory.
+
+nameOverride: "reader"
+fullnameOverride: "reader"
+
+replicaCount: 1
+image:
+  repository: your-dockerhub-user/reader-service
+  tag: "latest"
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  ports:
+    - name: grpc
+      port: 5001
+      targetPort: 5001
+
+probes:
+  liveness:
+    path: /health
+    port: 5001
+
+# NOTE: Environment variables are not declared in this base file—
+# instead, declare them as needed in the environment-specific override files.
+# Resource requests and limits are required and must also be specified in the env-specific values files.
