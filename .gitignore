@@ -1,0 +1,61 @@
+# Terraform
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+crash.log
+crash.*.log
+*.tfvars
+!*.tfvars.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE / editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Env and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+!*.key.example
+
+# Logs and temp
+*.log
+tmp/
+temp/
+.cache/
+
+# Helm (packaged charts and local index)
+*.tgz
+charts/*.tgz
+
+# Kubernetes
+kubeconfig
+*.kubeconfig
+
+# Local overrides
+*.local.yaml
+*.local.yml
+
+# Backstage
+node_modules/
+dist/
+.backstage/
+
+# Python
+__pycache__/
+.venv/
+venv/
+*.py[cod]
+
+# Go (if any tools)
+vendor/
