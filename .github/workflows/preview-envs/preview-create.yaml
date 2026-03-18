@@ -1,0 +1,22 @@
+name: Preview Environment
+
+on:
+  workflow_call:
+
+    inputs:
+      service:
+        required: true
+        type: string
+
+jobs:
+
+  deploy-preview:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Create namespace
+      run: |
+
+        kubectl create ns preview-pr-${{ github.event.number }} || true
