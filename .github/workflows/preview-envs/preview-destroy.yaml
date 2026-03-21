@@ -2,11 +2,13 @@ name: Remove Preview GitOps
 
 on:
   workflow_call:
-
     inputs:
       pr_number:
         required: true
         type: string
+    secrets:
+      GH_TOKEN:
+        required: true
 
 jobs:
 
@@ -18,19 +20,17 @@ jobs:
 
     - uses: actions/checkout@v4
       with:
-        repository: your-org/platform-engineering-project
+        repository: ${{ github.repository }}
         token: ${{ secrets.GH_TOKEN }}
 
     - name: Remove preview
       run: |
-
-        rm -rf platform-gitops/previews/pr-${{ inputs.pr_number }}
+        rm -rf "platform-helm/applications/microservices/envs/preview/preview-${{ inputs.pr_number }}"
 
     - name: Commit
       run: |
-
         git config user.name github-actions
         git config user.email actions@github.com
-
-        git commit -am "remove preview env pr-${{ inputs.pr_number }}"
+        git add "platform-helm/applications/microservices/envs/preview/preview-${{ inputs.pr_number }}/"
+        git diff --staged --quiet || git commit -m "remove preview env preview-${{ inputs.pr_number }}"
         git push
