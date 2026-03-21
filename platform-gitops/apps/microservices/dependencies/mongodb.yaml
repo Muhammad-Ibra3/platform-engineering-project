@@ -6,14 +6,12 @@ metadata:
 spec:
   project: default
   sources:
-    # Source 1: The official, immutable Bitnami chart
     - repoURL: 'https://charts.bitnami.com/bitnami'
       chart: mongodb
       targetRevision: 18.6.11 
       helm:
         valueFiles:
           - $myvalues/platform-helm/applications/app-dependencies/databases/mongodb/values.yaml
-    # Source 2: Your GitOps repository containing the values file
     - repoURL: 'https://github.com/Muhammad-Ibra3/platform-engineering-project.git'
       targetRevision: HEAD
       ref: myvalues
