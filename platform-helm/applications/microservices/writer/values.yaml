@@ -22,6 +22,21 @@ probes:
     path: /health
     port: 5000
 
-# NOTE: Environment variables are not declared in this base file—
-# instead, declare them as needed in the environment-specific override files.
-# Resource requests and limits are required and must also be specified in the env-specific values files.
+env:
+  GRPC_PORT: "5000"
+  LOG_LEVEL: "debug"
+  KAFKA_BROKERS: "kafka.message-broker.svc.cluster.local:9092"
+  POSTGRES_HOST: "postgresql.database.svc.cluster.local"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "products"
+  POSTGRES_USER: "postgres"
+  REDIS_ADDR: "redis.database.svc.cluster.local:6379"
+  MONGO_URI: "mongodb://mongodb.database.svc.cluster.local:27017"
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 250m
+    memory: 512Mi
