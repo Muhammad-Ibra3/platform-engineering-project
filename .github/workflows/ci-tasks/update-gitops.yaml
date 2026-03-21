@@ -2,14 +2,22 @@ name: Update GitOps
 
 on:
   workflow_call:
-
     inputs:
       service:
-        required: true
+        required: false
         type: string
+        description: "Single changed service (backward-compatible input)"
+      services:
+        required: false
+        type: string
+        description: "JSON array of service names (e.g. [\"api-gateway\",\"reader\",\"writer\"])"
       image_tag:
         required: true
         type: string
+      pr_number:
+        required: false
+        type: string
+        description: "PR number → directory preview-{pr_number} under platform-helm/.../envs/preview/"
       gitops_repo:
         required: false
         type: string
@@ -20,34 +28,86 @@ on:
         required: true
 
 jobs:
-
   update:
-
     runs-on: ubuntu-latest
-
     steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.gitops_repo }}
+          token: ${{ secrets.GH_TOKEN }}
+          ref: main
+          fetch-depth: 0 
 
-    - uses: actions/checkout@v4
-      with:
-        repository: ${{ inputs.gitops_repo }}
-        token: ${{ secrets.GH_TOKEN }}
+      - name: Install yq
+        uses: mikefarah/yq@v4.44.3
 
-    - name: Install yq
-      uses: mikefarah/yq@v4.44.3
+      - name: Create preview dir and values from dev overrides
+        run: |
+          PR_NUM="${{ inputs.pr_number }}"
+          if [ -z "$PR_NUM" ]; then
+            PR_NUM="${{ github.event.pull_request.number }}"
+          fi
+          PREVIEW_DIR="platform-helm/applications/microservices/envs/preview/preview-${PR_NUM}"
+          DEV_DIR="platform-helm/applications/microservices/envs/dev"
+          TAG="${{ inputs.image_tag }}"
+          
+          mkdir -p "$PREVIEW_DIR"
+          
+          map_to_helm() {
+            case "$1" in
+              *api*gateway*|*api_gateway*) echo "api-gateway" ;;
+              *reader*) echo "reader" ;;
+              *writer*) echo "writer" ;;
+              *) echo "$1" ;;
+            esac
+          }
+          services_payload='${{ inputs.services }}'
+          if [ -z "$services_payload" ]; then
+            if [ -n '${{ inputs.service }}' ]; then
+              services_payload='["${{ inputs.service }}"]'
+            else
+              services_payload='[]'
+            fi
+          fi
 
-    - name: Update Helm values
-      run: |
+          while read -r raw; do
+            service=$(map_to_helm "$raw")
+            # Adjusted to match standard Helm values naming ({service}-values.yaml)
+            src="${DEV_DIR}/${service}-values.yaml"
+            dst="${PREVIEW_DIR}/${service}-values.yaml"
+            
+            if [ -f "$src" ]; then
+              cp "$src" "$dst"
+              # Update the image tag
+              yq -i ".image.tag = \"$TAG\"" "$dst"
+              
+              # Provide a unique preview URL to avoid dev collisions
+              if [ "$service" = "api-gateway" ]; then
+                 yq -i ".ingress.hosts[0].host = \"api.preview-${PR_NUM}.dev.example.local\"" "$dst"
+              fi
+              
+            else
+              echo "Warning: $src not found, creating minimal values"
+              printf 'image:\n  tag: "%s"\n' "$TAG" > "$dst"
+              
+              if [ "$service" = "api-gateway" ]; then
+                 printf 'ingress:\n  hosts:\n    - host: "api.preview-%s.dev.example.local"\n' "$PR_NUM" >> "$dst"
+              fi
+            fi
+          done < <(echo "$services_payload" | jq -r '.[]')
 
-        yq -i \
-        '.image.tag="${{ inputs.image_tag }}"' \
-        platform-helm/charts/${{ inputs.service }}/values-preview.yaml
-
-    - name: Commit
-      run: |
-
-        git config user.name github-actions
-        git config user.email actions@github.com
-
-        git add .
-        git commit -m "update image for preview"
-        git push
+      - name: Commit and push
+        run: |
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add "platform-helm/applications/microservices/envs/preview/preview-${PR_NUM}/"
+          
+          if ! git diff --staged --quiet; then
+            git commit -m "Add/update preview env preview-${PR_NUM} from dev overrides"
+            
+            # Pull with rebase to handle concurrent PR builds gracefully
+            git pull --rebase origin main
+            git push origin main
+          else
+            echo "No changes detected to commit."
+          fi
