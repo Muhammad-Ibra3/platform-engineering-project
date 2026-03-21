@@ -6,7 +6,7 @@ ingress:
   enabled: true
   className: "traefik"
   hosts:
-    - host: api.dev.your-domain.local
+    - host: api.dev.example.local
       paths:
         - path: /
           pathType: Prefix

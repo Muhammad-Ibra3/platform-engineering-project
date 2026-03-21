@@ -7,7 +7,7 @@ ingress:
   enabled: true
   className: "traefik"
   hosts:
-    - host: api.your-domain.com
+    - host: api.example.com
       paths:
         - path: /
           pathType: Prefix
