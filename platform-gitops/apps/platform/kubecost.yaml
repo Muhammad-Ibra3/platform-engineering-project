@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubecost
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: 'https://kubecost.github.io/cost-analyzer/'
+      chart: cost-analyzer
+      targetRevision: 1.110.0
+      helm:
+        valueFiles:
+          - $myvalues/platform-helm/platform/finops/kubecost/values.yaml
+    - repoURL: 'https://github.com/Muhammad-Ibra3/platform-engineering-project.git'
+      targetRevision: HEAD
+      ref: myvalues
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: finops
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
