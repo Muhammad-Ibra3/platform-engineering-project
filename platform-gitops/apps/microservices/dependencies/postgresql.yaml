@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: postgresql
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: 'https://charts.bitnami.com/bitnami'
+      chart: postgresql
+      targetRevision: 18.5.6
+      helm:
+        valueFiles:
+          - $myvalues/platform-helm/applications/app-dependencies/databases/postgresdb/values.yaml
+    - repoURL: 'https://github.com/Muhammad-Ibra3/platform-engineering-project.git'
+      targetRevision: HEAD
+      ref: myvalues
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: database
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
