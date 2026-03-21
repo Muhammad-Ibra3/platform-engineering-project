@@ -18,11 +18,45 @@ jobs:
     steps:
 
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
-    - name: Find services
+    - name: Detect changed services from PR diff
       id: services
       run: |
+        base_sha="${{ github.event.pull_request.base.sha }}"
+        head_sha="${{ github.event.pull_request.head.sha }}"
+        files="$(git diff --name-only "$base_sha"... "$head_sha")"
 
-        services=$(find . -name Dockerfile | awk -F/ '{print $2}' | jq -R -s -c 'split("\n")[:-1]')
+        # Only hardcoded values: canonical service directory names.
+        services=("api_gateway_service" "reader_service" "writer_service")
+        declare -A svc=()
+        outside_service_dirs=false
 
-        echo "services=$services" >> $GITHUB_OUTPUT
+        while IFS= read -r f; do
+          [ -z "$f" ] && continue
+          matched=false
+          for s in "${services[@]}"; do
+            if [[ "$f" == "$s/"* ]]; then
+              svc["$s"]=1
+              matched=true
+            fi
+          done
+          if [ "$matched" = false ]; then
+            outside_service_dirs=true
+          fi
+        done < <(printf '%s\n' "$files")
+
+        # Any shared/root change can affect all images; include all services.
+        if [ "$outside_service_dirs" = true ]; then
+          for s in "${services[@]}"; do
+            svc["$s"]=1
+          done
+        fi
+
+        if [ ${#svc[@]} -eq 0 ]; then
+          echo 'services=[]' >> "$GITHUB_OUTPUT"
+        else
+          services_json="$(printf '%s\n' "${!svc[@]}" | jq -R -s -c 'split("\n")[:-1]')"
+          echo "services=$services_json" >> "$GITHUB_OUTPUT"
+        fi
