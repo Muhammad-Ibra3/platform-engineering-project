@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cilium
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: 'https://helm.cilium.io/'
+      chart: cilium
+      targetRevision: 1.16.1
+      helm:
+        valueFiles:
+          - $myvalues/platform-helm/platform/cluster-networking/cilium/values.yaml
+    - repoURL: 'https://github.com/Muhammad-Ibra3/platform-engineering-project.git'
+      targetRevision: HEAD
+      ref: myvalues
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: kube-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
