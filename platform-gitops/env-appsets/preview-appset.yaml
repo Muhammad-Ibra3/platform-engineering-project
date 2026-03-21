@@ -11,7 +11,8 @@ spec:
               repoURL: 'https://github.com/Muhammad-Ibra3/platform-engineering-project.git'
               revision: main
               directories:
-                - path: platform-gitops/envs/preview/*
+                # Directories under envs/preview (e.g. preview-123) created by CI update-gitops
+                - path: platform-helm/applications/microservices/envs/preview/*
           - list:
               elements:
                 - service: api-gateway
@@ -29,15 +30,14 @@ spec:
       source:
         repoURL: 'https://github.com/Muhammad-Ibra3/platform-engineering-project.git'
         targetRevision: HEAD
-        # Root context for the umbrella Helm chart
         path: 'platform-helm/applications'
         helm:
           ignoreMissingValueFiles: true
           valueFiles:
-            # Base values per service (e.g. microservices/api-gateway/values.yaml)
+            # Base values per service
             - 'microservices/{{service}}/values.yaml'
-            # Per-PR preview overrides from the directory found by the generator (e.g. platform-gitops/envs/preview/pr-123/api-gateway-values.yaml)
-            - '../../platform-gitops/envs/preview/{{path.basename}}/{{service}}-values.yaml'
+            # Preview overrides (e.g. microservices/envs/preview/preview-123/api-gateway-values.yaml)
+            - 'microservices/envs/preview/{{path.basename}}/{{service}}-values.yaml'
       destination:
         server: 'https://kubernetes.default.svc'
         namespace: 'preview-{{path.basename}}'
