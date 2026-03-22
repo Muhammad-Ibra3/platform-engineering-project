@@ -2,61 +2,76 @@ name: Detect Services
 
 on:
   workflow_call:
+    inputs:
+      base_sha:
+        required: true
+        type: string
+      head_sha:
+        required: true
+        type: string
     outputs:
       services:
+        description: JSON array of changed services
         value: ${{ jobs.detect.outputs.services }}
 
 jobs:
-
   detect:
-
     runs-on: ubuntu-latest
-
     outputs:
       services: ${{ steps.services.outputs.services }}
 
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - name: Detect changed services from diff
+        id: services
+        shell: bash
+        run: |
+          set -euo pipefail
 
-    - name: Detect changed services from PR diff
-      id: services
-      run: |
-        base_sha="${{ github.event.pull_request.base.sha }}"
-        head_sha="${{ github.event.pull_request.head.sha }}"
-        files="$(git diff --name-only "$base_sha"... "$head_sha")"
+          base_sha="${{ inputs.base_sha }}"
+          head_sha="${{ inputs.head_sha }}"
+          files="$(git diff --name-only "$base_sha" "$head_sha")"
 
-        # Only hardcoded values: canonical service directory names.
-        services=("api_gateway_service" "reader_service" "writer_service")
-        declare -A svc=()
-        outside_service_dirs=false
+          services=("api-gateway" "reader" "writer")
+          declare -A svc=()
+          outside_service_dirs=false
 
-        while IFS= read -r f; do
-          [ -z "$f" ] && continue
-          matched=false
-          for s in "${services[@]}"; do
-            if [[ "$f" == "$s/"* ]]; then
-              svc["$s"]=1
-              matched=true
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            matched=false
+
+            case "$f" in
+              api_gateway_service/*)
+                svc["api-gateway"]=1
+                matched=true
+                ;;
+              reader_service/*)
+                svc["reader"]=1
+                matched=true
+                ;;
+              writer_service/*)
+                svc["writer"]=1
+                matched=true
+                ;;
+            esac
+
+            if [ "$matched" = false ]; then
+              outside_service_dirs=true
             fi
-          done
-          if [ "$matched" = false ]; then
-            outside_service_dirs=true
+          done < <(printf '%s\n' "$files")
+
+          if [ "$outside_service_dirs" = true ]; then
+            for s in "${services[@]}"; do
+              svc["$s"]=1
+            done
           fi
-        done < <(printf '%s\n' "$files")
 
-        # Any shared/root change can affect all images; include all services.
-        if [ "$outside_service_dirs" = true ]; then
-          for s in "${services[@]}"; do
-            svc["$s"]=1
-          done
-        fi
-
-        if [ ${#svc[@]} -eq 0 ]; then
-          echo 'services=[]' >> "$GITHUB_OUTPUT"
-        else
-          services_json="$(printf '%s\n' "${!svc[@]}" | jq -R -s -c 'split("\n")[:-1]')"
-          echo "services=$services_json" >> "$GITHUB_OUTPUT"
-        fi
+          if [ "${#svc[@]}" -eq 0 ]; then
+            echo 'services=[]' >> "$GITHUB_OUTPUT"
+          else
+            services_json="$(printf '%s\n' "${!svc[@]}" | sort | jq -R -s -c 'split("\n")[:-1]')"
+            echo "services=$services_json" >> "$GITHUB_OUTPUT"
+          fi

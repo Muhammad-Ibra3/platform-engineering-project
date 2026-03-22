@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cluster-workloads-bootstrap-prod
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: 'https://github.com/Muhammad-Ibra3/platform-engineering-project.git'
+    targetRevision: main
+    path: platform-gitops/env-appsets/prod
+    directory:
+      recurse: true
+
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: argocd
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

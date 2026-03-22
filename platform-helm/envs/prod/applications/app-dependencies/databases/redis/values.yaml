@@ -1,0 +1,42 @@
+image:
+  repository: bitnami/redis
+  tag: 7.4.1-debian-12-r2
+  digest: ""
+
+architecture: replication
+auth:
+  enabled: true
+  existingSecret: redis-auth
+
+master:
+  persistence:
+    enabled: true
+    size: 1Gi
+    storageClass: gp3
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 512Mi
+
+replica:
+  replicaCount: 1
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 2
+    targetCPU: 70
+  resources:
+    requests:
+      cpu: 30m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true

@@ -1,0 +1,23 @@
+kubecostModel:
+  image:
+    repository: gcr.io/kubecost1/cost-model
+    tag: prod-1.110.0
+  resources:
+    requests:
+      cpu: 25m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 512Mi
+
+kubecostFrontend:
+  image:
+    repository: gcr.io/kubecost1/frontend
+    tag: prod-1.110.0
+  resources:
+    requests:
+      cpu: 25m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 512Mi

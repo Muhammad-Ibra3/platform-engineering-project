@@ -1,0 +1,90 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: prod-dependency-apps
+  namespace: argocd
+
+spec:
+  goTemplate: true
+
+  generators:
+    - list:
+        elements:
+          - name: mongodb
+            chartRepo: https://charts.bitnami.com/bitnami
+            chartName: mongodb
+            chartVersion: 18.6.11
+            targetNamespace: database
+            valuesPath: platform-helm/envs/prod/applications/app-dependencies/databases/mongodb/values.yaml
+            syncWave: "0"
+
+          - name: postgresql
+            chartRepo: https://charts.bitnami.com/bitnami
+            chartName: postgresql
+            chartVersion: 18.5.6
+            targetNamespace: database
+            valuesPath: platform-helm/envs/prod/applications/app-dependencies/databases/postgresdb/values.yaml
+            syncWave: "0"
+
+          - name: redis
+            chartRepo: https://charts.bitnami.com/bitnami
+            chartName: redis
+            chartVersion: 20.0.1
+            targetNamespace: database
+            valuesPath: platform-helm/envs/prod/applications/app-dependencies/databases/redis/values.yaml
+            syncWave: "0"
+
+          - name: kafka
+            chartRepo: https://charts.bitnami.com/bitnami
+            chartName: kafka
+            chartVersion: 32.4.3
+            targetNamespace: message-broker
+            valuesPath: platform-helm/envs/prod/applications/app-dependencies/message-queue/kafka/values.yaml
+            syncWave: "1"
+
+  template:
+    metadata:
+      name: 'prod-{{.name}}'
+      namespace: argocd
+      labels:
+        environment: prod
+        tier: dependency
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{.syncWave}}'
+
+    spec:
+      project: default
+
+      sources:
+        # Helm chart source
+        - repoURL: '{{.chartRepo}}'
+          chart: '{{.chartName}}'
+          targetRevision: '{{.chartVersion}}'
+          helm:
+            releaseName: '{{.name}}'
+            ignoreMissingValueFiles: false
+            valueFiles:
+              - '$myvalues/{{.valuesPath}}'
+
+        # Values repo
+        - repoURL: 'https://github.com/Muhammad-Ibra3/platform-engineering-project.git'
+          targetRevision: main
+          ref: myvalues
+
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{.targetNamespace}}'
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        retry:
+          limit: 5
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 3m
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true

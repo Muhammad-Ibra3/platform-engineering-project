@@ -1,0 +1,41 @@
+image:
+  repository: bitnami/kafka
+  tag: 3.8.0-debian-12-r4
+  digest: ""
+
+kraft:
+  enabled: true
+
+controller:
+  replicaCount: 1
+  persistence:
+    enabled: true
+    size: 2Gi
+    storageClass: gp3
+
+broker:
+  replicaCount: 1
+  persistence:
+    enabled: true
+    size: 5Gi
+    storageClass: gp3
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 600m
+      memory: 1Gi
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 2
+    targetCPU: 70
+
+metrics:
+  kafka:
+    enabled: true
+  jmx:
+    enabled: true
+  serviceMonitor:
+    enabled: true

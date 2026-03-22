@@ -1,0 +1,26 @@
+installCRDs: true
+
+image:
+  repository: quay.io/jetstack/cert-manager-controller
+  tag: v1.16.0
+  digest: ""
+
+webhook:
+  image:
+    repository: quay.io/jetstack/cert-manager-webhook
+    tag: v1.16.0
+    digest: ""
+
+cainjector:
+  image:
+    repository: quay.io/jetstack/cert-manager-cainjector
+    tag: v1.16.0
+    digest: ""
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: 300m
+    memory: 256Mi

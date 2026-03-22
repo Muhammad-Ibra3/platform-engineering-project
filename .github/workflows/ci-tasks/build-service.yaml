@@ -2,7 +2,6 @@ name: Build Service
 
 on:
   workflow_call:
-
     inputs:
       service:
         required: true
@@ -11,7 +10,6 @@ on:
         required: false
         type: string
         default: ${{ github.sha }}
-
     outputs:
       image:
         value: ${{ jobs.build.outputs.image }}
@@ -19,41 +17,56 @@ on:
         value: ${{ jobs.build.outputs.image_artifact }}
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     outputs:
       image: ${{ steps.meta.outputs.image }}
       image_artifact: ${{ steps.meta.outputs.image_artifact }}
 
     steps:
+      - uses: actions/checkout@v4
 
-    - uses: actions/checkout@v4
+      - name: Resolve service directory and image metadata
+        id: meta
+        shell: bash
+        run: |
+          set -euo pipefail
 
-    - name: Image metadata
-      id: meta
-      run: |
-        image="local/${{ inputs.service }}:${{ inputs.image_tag }}"
-        image_artifact="image-${{ inputs.service }}-${{ inputs.image_tag }}"
-        echo "image=$image" >> "$GITHUB_OUTPUT"
-        echo "image_artifact=$image_artifact" >> "$GITHUB_OUTPUT"
+          service="${{ inputs.service }}"
+          case "$service" in
+            api-gateway) service_dir="api_gateway_service" ;;
+            reader) service_dir="reader_service" ;;
+            writer) service_dir="writer_service" ;;
+            *)
+              echo "Unsupported service: $service"
+              exit 1
+              ;;
+          esac
 
-    - name: Build image
-      run: |
+          image="local/${service}:${{ inputs.image_tag }}"
+          image_artifact="image-${service}-${{ inputs.image_tag }}"
 
-        docker build \
-          -f ${{ inputs.service }}/Dockerfile \
-          -t local/${{ inputs.service }}:${{ inputs.image_tag }} \
-          .
+          echo "service_dir=$service_dir" >> "$GITHUB_OUTPUT"
+          echo "image=$image" >> "$GITHUB_OUTPUT"
+          echo "image_artifact=$image_artifact" >> "$GITHUB_OUTPUT"
 
-    - name: Save image
-      run: |
-        docker save "local/${{ inputs.service }}:${{ inputs.image_tag }}" -o image.tar
+      - name: Build image
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker build \
+            -f "${{ steps.meta.outputs.service_dir }}/Dockerfile" \
+            -t "${{ steps.meta.outputs.image }}" \
+            .
 
-    - name: Upload image artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ steps.meta.outputs.image_artifact }}
-        path: image.tar
+      - name: Save image
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker save "${{ steps.meta.outputs.image }}" -o image.tar
+
+      - name: Upload image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.meta.outputs.image_artifact }}
+          path: image.tar

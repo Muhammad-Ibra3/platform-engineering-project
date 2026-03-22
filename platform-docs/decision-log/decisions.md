@@ -1,28 +1,45 @@
+# Architectural Decision Log
 
-## 🏗️ Architectural Decision Log
+This file tracks currently accepted architecture decisions.
 
-**1. The "Platform in a Box" FinOps Strategy**
+## 1) Platform in a box for FinOps efficiency
 
-- **Context:** Running a highly available AWS EKS cluster with heavy CNCF tools (Kafka, Vault, Backstage) 24/7 generates significant cloud waste during development.
-- **Decision:** Engineered a single-node testing sandbox using `k3d` on an ephemeral AWS `m7i-flex.2xlarge` Spot Instance (32 GiB RAM).
-- **Impact:** Achieved 100% GitOps pipeline parity while reducing compute costs by ~95%. The cluster can be destroyed and recreated from Git state in under 5 minutes.
+- **Context:** Running full-size managed infrastructure continuously for development created high spend and low utilization.
+- **Decision:** Use an ephemeral single-node sandbox (`k3d` on spot compute) while keeping the same GitOps model.
+- **Impact:** Large cost reduction with fast rebuild capability from Git state.
 
-**2. eBPF Observability (Cilium over Pixie)**
+## 2) eBPF networking and observability through Cilium
 
-- **Context:** The CQRS architecture relies on gRPC and Kafka events, which are difficult to monitor using standard proxies.
-- **Decision:** Replaced the default k3s Flannel CNI with **Cilium** to leverage eBPF kernel-level routing. 
-- **Impact:** Enabled deep gRPC tracing via **Hubble**. Opted out of Pixie to preserve the RAM budget on the single-node Sandbox, preventing Out-Of-Memory (OOM) crashes.
+- **Context:** gRPC and event-driven traffic are difficult to observe with basic proxy-centric tooling.
+- **Decision:** Use Cilium as CNI and rely on eBPF-native telemetry.
+- **Impact:** Better network visibility without introducing heavier observability components that exceed sandbox budgets.
 
-**3. Workload Identity & mTLS (Cilium vs. SPIFFE/SPIRE)**
+## 3) Native mTLS and identity without SPIFFE/SPIRE
 
-- **Context:** Need to secure workload-to-workload communication (e.g., Reader Service to PostgreSQL) with identity-based mutual TLS (mTLS) and Zero-Trust principles.
-- **Decision:** Relied entirely on Cilium's native eBPF-based mTLS and Network Policies. Explicitly excluded SPIFFE/SPIRE from the architecture.
-- **Impact:** Prevented architectural redundancy ("a hat on a hat"). Avoided the massive memory overhead of running a SPIRE Server and node agents on the single-node sandbox while still achieving rigorous, cryptographically verifiable workload security.
+- **Context:** The platform required workload-level trust while remaining lightweight.
+- **Decision:** Use Cilium-native policy and identity controls rather than adding SPIFFE/SPIRE.
+- **Impact:** Lower operational complexity and memory usage while preserving zero-trust posture.
 
-**4. GitOps Portability**
+## 4) Strict GitOps deployment portability
 
-- **Context:** Moving from a local testing cluster to a production cloud cluster is traditionally fraught with configuration drift.
-- **Decision:** Enforced a strict "GitOps Only" deployment model using ArgoCD.
-- **Impact:** Migrating from Phase 1 (k3d) to Phase 2 (EKS) requires zero application rewrites, proving the absolute reliability of declarative infrastructure.
+- **Context:** Environment migration often introduces drift and manual steps.
+- **Decision:** Treat Git as the only desired-state source and deploy via Argo CD/ApplicationSets.
+- **Impact:** Reproducible rollouts from dev to prod with minimal environment-specific logic.
 
----
+## 5) Split Helm chart logic from environment values
+
+- **Context:** Duplicating Helm templates per environment caused maintenance overhead and path drift.
+- **Decision:** Keep reusable chart source in `platform-helm/general/microservices` and all environment differences under `platform-helm/envs/<env>/...`.
+- **Impact:** Cleaner ownership boundaries, easier path reasoning, and faster onboarding.
+
+## 6) Directory-driven preview environments
+
+- **Context:** Preview environments need to be ephemeral and PR-scoped without bespoke manifests.
+- **Decision:** Generate PR overlays under `platform-helm/envs/preview/microservices/preview-<PR>/` and let preview ApplicationSet discover directories.
+- **Impact:** Consistent preview lifecycle (create/update/destroy) via CI + Argo reconciliation.
+
+## 7) Trivy kept in CI, not deployed in-cluster
+
+- **Context:** Runtime footprint had to stay lean for the current cluster profile.
+- **Decision:** Remove Trivy Operator from platform appsets; continue image scanning in CI workflows.
+- **Impact:** Reduced cluster overhead while preserving security scanning in the pipeline.

@@ -1,0 +1,25 @@
+image:
+  repository: falcosecurity/falco-no-driver
+  tag: 0.38.2
+  digest: ""
+
+falco:
+  grpc:
+    enabled: true
+  rules_files:
+    - /etc/falco/falco_rules.yaml
+    - /etc/falco/falco_rules.local.yaml
+    - /etc/falco/rules.d
+
+# Enterprise custom Falco rules should be managed in:
+# platform-security/falco/rules.yaml
+# via the additional valueFiles entry in platform-gitops/apps/platform/falco.yaml.
+customRules: {}
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: 300m
+    memory: 256Mi

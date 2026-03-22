@@ -1,0 +1,77 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: preview-environments
+  namespace: argocd
+
+spec:
+  goTemplate: true
+
+  generators:
+    - matrix:
+        generators:
+          # PR environments (directories)
+          - git:
+              repoURL: 'https://github.com/Muhammad-Ibra3/platform-engineering-project.git'
+              revision: main
+              directories:
+                - path: platform-helm/envs/preview/microservices/*
+
+          # Services
+          - list:
+              elements:
+                - service: api-gateway
+                  syncWave: "10"
+                - service: reader
+                  syncWave: "10"
+                - service: writer
+                  syncWave: "10"
+
+  template:
+    metadata:
+      name: 'preview-{{.path.basename}}-{{.service}}'
+      namespace: argocd
+      labels:
+        environment: preview
+        pr: '{{.path.basename}}'
+        tier: microservices
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{.syncWave}}'
+
+    spec:
+      project: default
+
+      sources:
+        # Base microservice chart
+        - repoURL: 'https://github.com/Muhammad-Ibra3/platform-engineering-project.git'
+          targetRevision: main
+          path: platform-helm/general/microservices
+          helm:
+            releaseName: '{{.service}}-{{.path.basename}}'
+            ignoreMissingValueFiles: false
+            valueFiles:
+              - '{{.service}}/values.yaml'
+              - '$myvalues/platform-helm/envs/preview/microservices/{{.path.basename}}/{{.service}}-values.yaml'
+
+        # Values repo reference
+        - repoURL: 'https://github.com/Muhammad-Ibra3/platform-engineering-project.git'
+          targetRevision: main
+          ref: myvalues
+
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: 'preview-{{.path.basename}}'
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        retry:
+          limit: 3
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 2m
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true

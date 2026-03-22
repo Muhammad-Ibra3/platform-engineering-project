@@ -1,4 +1,4 @@
-name: Push Image
+name: "[DEPRECATED] Push Image"
 
 on:
   workflow_call:
@@ -13,7 +13,10 @@ on:
       image_artifact:
         required: true
         type: string
-
+    outputs:
+      image_ref:
+        description: Fully qualified pushed image reference
+        value: ${{ jobs.expose-output.outputs.image_ref }}
     secrets:
       AWS_ROLE:
         required: true
@@ -21,38 +24,33 @@ on:
         required: true
 
 jobs:
-  push:
+  deprecation-notice:
     runs-on: ubuntu-latest
-
-    permissions:
-      id-token: write
-      contents: read
-
     steps:
-    - name: Download image artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: ${{ inputs.image_artifact }}
-        path: .
+      - name: Deprecation warning
+        shell: bash
+        run: |
+          echo "::warning file=.github/workflows/ci-tasks/push-image.yaml,title=Deprecated workflow::This workflow is deprecated. Use .github/workflows/ci-tasks/push-and-sign.yaml instead."
 
-    - name: Load image
-      run: |
-        docker load -i image.tar
+  push-and-sign:
+    needs: deprecation-notice
+    uses: ./.github/workflows/ci-tasks/push-and-sign.yaml
+    with:
+      service: ${{ inputs.service }}
+      image_tag: ${{ inputs.image_tag }}
+      image_artifact: ${{ inputs.image_artifact }}
+    secrets:
+      AWS_ROLE: ${{ secrets.AWS_ROLE }}
+      ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
 
-    - uses: aws-actions/configure-aws-credentials@v4
-      with:
-        role-to-assume: ${{ secrets.AWS_ROLE }}
-        aws-region: us-east-1
-
-    - uses: aws-actions/amazon-ecr-login@v2
-
-    - name: Tag image for registry
-      run: |
-        docker tag \
-          "local/${{ inputs.service }}:${{ inputs.image_tag }}" \
-          "${{ secrets.ECR_REGISTRY }}/${{ inputs.service }}:${{ inputs.image_tag }}"
-
-    - name: Push image
-      run: |
-        docker push \
-          "${{ secrets.ECR_REGISTRY }}/${{ inputs.service }}:${{ inputs.image_tag }}"
+  expose-output:
+    needs: push-and-sign
+    runs-on: ubuntu-latest
+    outputs:
+      image_ref: ${{ steps.out.outputs.image_ref }}
+    steps:
+      - name: Set image output
+        id: out
+        shell: bash
+        run: |
+          echo "image_ref=${{ needs.push-and-sign.outputs.image_ref }}" >> "$GITHUB_OUTPUT"

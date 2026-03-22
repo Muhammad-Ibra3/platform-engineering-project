@@ -1,0 +1,144 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: prod-platform-apps
+  namespace: argocd
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          - name: cilium
+            chartRepo: https://helm.cilium.io/
+            chartName: cilium
+            chartVersion: 1.16.1
+            targetNamespace: kube-system
+            valuesPath: platform-helm/envs/prod/platform/cluster-networking/cilium/values.yaml
+            syncWave: "0"
+
+          - name: cert-manager
+            chartRepo: https://charts.jetstack.io
+            chartName: cert-manager
+            chartVersion: v1.16.0
+            targetNamespace: cert-manager
+            valuesPath: platform-helm/envs/prod/platform/ingress/cert-manager/values.yaml
+            syncWave: "1"
+
+          - name: traefik
+            chartRepo: https://traefik.github.io/charts
+            chartName: traefik
+            chartVersion: 31.0.0
+            targetNamespace: ingress
+            valuesPath: platform-helm/envs/prod/platform/ingress/traefik/values.yaml
+            syncWave: "2"
+
+          - name: vault
+            chartRepo: https://helm.releases.hashicorp.com
+            chartName: vault
+            chartVersion: 0.28.1
+            targetNamespace: secrets
+            valuesPath: platform-helm/envs/prod/platform/secrets/vault/values.yaml
+            syncWave: "2"
+
+          - name: keycloak
+            chartRepo: https://charts.bitnami.com/bitnami
+            chartName: keycloak
+            chartVersion: 24.0.1
+            targetNamespace: identity
+            valuesPath: platform-helm/envs/prod/platform/identity/keycloak/values.yaml
+            syncWave: "3"
+
+          - name: kyverno
+            chartRepo: https://kyverno.github.io/kyverno/
+            chartName: kyverno
+            chartVersion: 3.3.4
+            targetNamespace: security
+            valuesPath: platform-helm/envs/prod/platform/security/kyverno/values.yaml
+            syncWave: "3"
+
+          - name: falco
+            chartRepo: https://falcosecurity.github.io/charts
+            chartName: falco
+            chartVersion: 4.17.0
+            targetNamespace: security
+            valuesPath: platform-helm/envs/prod/platform/security/falco/values.yaml
+            syncWave: "3"
+
+          - name: prometheus
+            chartRepo: https://prometheus-community.github.io/helm-charts
+            chartName: prometheus
+            chartVersion: 26.0.1
+            targetNamespace: observability
+            valuesPath: platform-helm/envs/prod/platform/observability/prometheus/values.yaml
+            syncWave: "4"
+
+          - name: loki
+            chartRepo: https://grafana.github.io/helm-charts
+            chartName: loki
+            chartVersion: 6.18.0
+            targetNamespace: observability
+            valuesPath: platform-helm/envs/prod/platform/observability/loki/values.yaml
+            syncWave: "4"
+
+          - name: grafana
+            chartRepo: https://grafana.github.io/helm-charts
+            chartName: grafana
+            chartVersion: 8.5.10
+            targetNamespace: observability
+            valuesPath: platform-helm/envs/prod/platform/observability/grafana/values.yaml
+            syncWave: "4"
+
+          - name: kubecost
+            chartRepo: https://kubecost.github.io/cost-analyzer/
+            chartName: cost-analyzer
+            chartVersion: 1.110.0
+            targetNamespace: finops
+            valuesPath: platform-helm/envs/prod/platform/finops/kubecost/values.yaml
+            syncWave: "5"
+
+  template:
+    metadata:
+      name: 'prod-{{.name}}'
+      namespace: argocd
+      labels:
+        environment: prod
+        tier: platform
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{.syncWave}}'
+
+    spec:
+      project: default
+
+      sources:
+        # Helm chart source
+        - repoURL: '{{.chartRepo}}'
+          chart: '{{.chartName}}'
+          targetRevision: '{{.chartVersion}}'
+          helm:
+            releaseName: '{{.name}}'
+            ignoreMissingValueFiles: false
+            valueFiles:
+              - '$myvalues/{{.valuesPath}}'
+
+        # Values repo
+        - repoURL: 'https://github.com/Muhammad-Ibra3/platform-engineering-project.git'
+          targetRevision: main
+          ref: myvalues
+
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{.targetNamespace}}'
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        retry:
+          limit: 5
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 3m
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true

@@ -1,0 +1,28 @@
+image:
+  repository: bitnami/keycloak
+  tag: 25.0.4-debian-12-r0
+  digest: ""
+
+auth:
+  existingSecret: keycloak-auth
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 1Gi
+
+ingress:
+  enabled: false
+
+postgresql:
+  enabled: true
+  auth:
+    existingSecret: keycloak-postgresql-auth
+  primary:
+    persistence:
+      enabled: true
+      size: 2Gi
+      storageClass: gp3

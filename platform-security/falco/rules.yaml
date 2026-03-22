@@ -1,0 +1,10 @@
+customRules:
+  platform-rules.yaml: |-
+    # Add custom Falco rules here.
+    # Example:
+    # - rule: Terminal shell in container
+    #   desc: Detect shell spawned in container
+    #   condition: container and proc.name in (bash, sh, zsh)
+    #   output: "Shell spawned in container (user=%user.name container=%container.id image=%container.image.repository)"
+    #   priority: NOTICE
+    #   tags: [container, process]

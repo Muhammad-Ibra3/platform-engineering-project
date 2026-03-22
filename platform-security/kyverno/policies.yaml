@@ -1,0 +1,21 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: audit-require-basic-labels
+spec:
+  validationFailureAction: Audit
+  background: true
+  rules:
+    - name: require-app-and-environment-labels
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      validate:
+        message: "Pods should include app and environment labels."
+        pattern:
+          metadata:
+            labels:
+              app: "?*"
+              environment: "?*"

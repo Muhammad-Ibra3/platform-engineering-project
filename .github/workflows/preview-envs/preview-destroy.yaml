@@ -25,12 +25,12 @@ jobs:
 
     - name: Remove preview
       run: |
-        rm -rf "platform-helm/applications/microservices/envs/preview/preview-${{ inputs.pr_number }}"
+        rm -rf "platform-helm/envs/preview/microservices/preview-${{ inputs.pr_number }}"
 
     - name: Commit
       run: |
         git config user.name github-actions
         git config user.email actions@github.com
-        git add "platform-helm/applications/microservices/envs/preview/preview-${{ inputs.pr_number }}/"
+        git add "platform-helm/envs/preview/microservices/preview-${{ inputs.pr_number }}/"
         git diff --staged --quiet || git commit -m "remove preview env preview-${{ inputs.pr_number }}"
         git push

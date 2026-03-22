@@ -103,6 +103,13 @@ resource "aws_instance" "k3s_node_free_tier" {
 
               curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
+              export KUBECONFIG=/home/ubuntu/kubeconfig.yaml
+              kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
+              kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+              kubectl wait --for=condition=available --timeout=300s deployment/argocd-server -n argocd
+              kubectl wait --for=condition=available --timeout=300s deployment/argocd-applicationset-controller -n argocd
+              kubectl apply -f https://raw.githubusercontent.com/Muhammad-Ibra3/platform-engineering-project/main/platform-gitops/argo/argo-init-dev.yaml
+
               echo 'export KUBECONFIG=/home/ubuntu/kubeconfig.yaml' >> /home/ubuntu/.bashrc
               echo "alias k='kubectl'" >> /home/ubuntu/.bashrc
               

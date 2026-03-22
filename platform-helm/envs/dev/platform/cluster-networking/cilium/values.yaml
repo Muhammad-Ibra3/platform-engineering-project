@@ -1,0 +1,25 @@
+image:
+  repository: quay.io/cilium/cilium
+  tag: v1.16.1
+  digest: ""
+
+operator:
+  replicas: 1
+  image:
+    repository: quay.io/cilium/operator-generic
+    tag: v1.16.1
+    digest: ""
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 300m
+      memory: 256Mi
+
+hubble:
+  enabled: true
+  relay:
+    enabled: true
+  ui:
+    enabled: true
