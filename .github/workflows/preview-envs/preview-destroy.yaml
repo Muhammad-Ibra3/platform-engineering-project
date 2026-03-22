@@ -6,31 +6,49 @@ on:
       pr_number:
         required: true
         type: string
+      gitops_repo:
+        required: true
+        type: string
     secrets:
       GH_TOKEN:
         required: true
 
+permissions:
+  contents: write
+
 jobs:
-
   cleanup:
-
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.gitops_repo }}
+          token: ${{ secrets.GH_TOKEN }}
+          ref: main
+          fetch-depth: 0
 
-    - uses: actions/checkout@v4
-      with:
-        repository: ${{ github.repository }}
-        token: ${{ secrets.GH_TOKEN }}
+      - name: Remove preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf "platform-helm/envs/preview/microservices/${{ inputs.pr_number }}"
 
-    - name: Remove preview
-      run: |
-        rm -rf "platform-helm/envs/preview/microservices/preview-${{ inputs.pr_number }}"
+      - name: Commit and push
+        shell: bash
+        run: |
+          set -euo pipefail
 
-    - name: Commit
-      run: |
-        git config user.name github-actions
-        git config user.email actions@github.com
-        git add "platform-helm/envs/preview/microservices/preview-${{ inputs.pr_number }}/"
-        git diff --staged --quiet || git commit -m "remove preview env preview-${{ inputs.pr_number }}"
-        git push
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+
+          git add -A "platform-helm/envs/preview/microservices/${{ inputs.pr_number }}"
+
+          if git diff --staged --quiet; then
+            echo "No preview environment changes detected."
+            exit 0
+          fi
+
+          git pull --rebase origin main
+          git commit -m "Remove preview env ${{ inputs.pr_number }} [skip ci]"
+          git push origin HEAD:main
