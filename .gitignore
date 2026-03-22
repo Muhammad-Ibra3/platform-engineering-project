@@ -59,3 +59,6 @@ venv/
 
 # Go (if any tools)
 vendor/
+
+# Local helper scripts
+platform-infrastructre/environments/testing/deploy-and-ssh.sh
