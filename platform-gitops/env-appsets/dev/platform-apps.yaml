@@ -43,7 +43,7 @@ spec:
           - name: keycloak
             chartRepo: https://charts.bitnami.com/bitnami
             chartName: keycloak
-            chartVersion: 24.0.1
+            chartVersion: 25.2.0
             targetNamespace: identity
             valuesPath: platform-helm/envs/dev/platform/identity/keycloak/values.yaml
             syncWave: "3"
