@@ -11,7 +11,7 @@ spec:
           - name: cilium
             chartRepo: https://helm.cilium.io/
             chartName: cilium
-            chartVersion: v1.20.0-pre.0
+            chartVersion: 1.19.1
             targetNamespace: kube-system
             valuesPath: platform-helm/envs/dev/platform/cluster-networking/cilium/values.yaml
             syncWave: "0"

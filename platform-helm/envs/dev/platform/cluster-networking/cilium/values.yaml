@@ -1,19 +1,22 @@
 image:
   repository: quay.io/cilium/cilium
-  tag: v1.20.0-pre.0
+  tag: v1.19.1
 
 operator:
-  replicas: 1
+  replicas: 2
+  skipCRDCreation: false
   image:
     repository: quay.io/cilium/operator-generic
-    tag: v1.20.0-pre.0
+    tag: v1.19.1
   resources:
     requests:
-      cpu: 50m
-      memory: 128Mi
-    limits:
-      cpu: 300m
+      cpu: 100m
       memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+crdWaitTimeout: 10m
 
 hubble:
   enabled: true
