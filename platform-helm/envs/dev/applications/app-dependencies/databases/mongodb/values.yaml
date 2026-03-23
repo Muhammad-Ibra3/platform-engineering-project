@@ -14,7 +14,6 @@ auth:
 persistence:
   enabled: true
   size: 2Gi
-  storageClass: gp3
 
 resources:
   requests:
