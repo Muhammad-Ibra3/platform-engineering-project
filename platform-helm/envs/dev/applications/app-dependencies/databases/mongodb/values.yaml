@@ -27,7 +27,7 @@ resources:
 metrics:
   enabled: true
   serviceMonitor:
-    enabled: true
+    enabled: false
 
 autoscaling:
   enabled: true
