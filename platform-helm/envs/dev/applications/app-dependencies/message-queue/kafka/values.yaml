@@ -1,6 +1,6 @@
 image:
   repository: bitnami/kafka
-  tag: 3.8.0-debian-12-r4
+  tag: 3.3.1-debian-11-r11
   digest: ""
 
 kraft:
