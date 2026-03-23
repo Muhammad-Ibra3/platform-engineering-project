@@ -1,12 +1,12 @@
 image:
   repository: quay.io/cilium/cilium
-  tag: v1.16.1
+  tag: v1.20.0-pre.0
 
 operator:
   replicas: 1
   image:
     repository: quay.io/cilium/operator-generic
-    tag: v1.16.1
+    tag: v1.20.0-pre.0
   resources:
     requests:
       cpu: 50m
