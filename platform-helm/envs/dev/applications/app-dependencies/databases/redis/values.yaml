@@ -39,4 +39,4 @@ replica:
 metrics:
   enabled: true
   serviceMonitor:
-    enabled: true
+    enabled: false
