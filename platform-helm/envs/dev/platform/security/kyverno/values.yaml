@@ -1,7 +1,11 @@
+global:
+  image:
+    registry: reg.kyverno.io
+
 admissionController:
   image:
-    repository: reg.kyverno.io/kyverno/kyverno
-    tag: v1.17.1
+    repository: kyverno/kyverno
+    tag: "v1.17.1"
   replicas: 1
   resources:
     requests:
@@ -13,8 +17,8 @@ admissionController:
 
 backgroundController:
   image:
-    repository: reg.kyverno.io/kyverno/background-controller
-    tag: v1.17.1
+    repository: kyverno/background-controller
+    tag: "v1.17.1"
   replicas: 1
 
 cleanupController:
