@@ -40,13 +40,13 @@ spec:
             valuesPath: platform-helm/envs/dev/platform/secrets/vault/values.yaml
             syncWave: "2"
 
-          - name: keycloak
-            chartRepo: https://charts.bitnami.com/bitnami
-            chartName: keycloak
-            chartVersion: 25.2.0
-            targetNamespace: identity
-            valuesPath: platform-helm/envs/dev/platform/identity/keycloak/values.yaml
-            syncWave: "3"
+          # - name: keycloak
+          #   chartRepo: https://charts.bitnami.com/bitnami
+          #   chartName: keycloak
+          #   chartVersion: 25.2.0
+          #   targetNamespace: identity
+          #   valuesPath: platform-helm/envs/dev/platform/identity/keycloak/values.yaml
+          #   syncWave: "3"
 
           # - name: kyverno
           #   chartRepo: https://kyverno.github.io/kyverno/
@@ -57,45 +57,45 @@ spec:
           #   syncWave: "3"
           # Commented out for testing
 
-          - name: falco
-            chartRepo: https://falcosecurity.github.io/charts
-            chartName: falco
-            chartVersion: 8.0.1
-            targetNamespace: security
-            valuesPath: platform-helm/envs/dev/platform/security/falco/values.yaml
-            syncWave: "3"
+          # - name: falco
+          #   chartRepo: https://falcosecurity.github.io/charts
+          #   chartName: falco
+          #   chartVersion: 8.0.1
+          #   targetNamespace: security
+          #   valuesPath: platform-helm/envs/dev/platform/security/falco/values.yaml
+          #   syncWave: "3"
 
-          - name: prometheus
-            chartRepo: https://prometheus-community.github.io/helm-charts
-            chartName: prometheus
-            chartVersion: 26.0.1
-            targetNamespace: observability
-            valuesPath: platform-helm/envs/dev/platform/observability/prometheus/values.yaml
-            syncWave: "4"
+          # - name: prometheus
+          #   chartRepo: https://prometheus-community.github.io/helm-charts
+          #   chartName: prometheus
+          #   chartVersion: 26.0.1
+          #   targetNamespace: observability
+          #   valuesPath: platform-helm/envs/dev/platform/observability/prometheus/values.yaml
+          #   syncWave: "4"
 
-          - name: loki
-            chartRepo: https://grafana.github.io/helm-charts
-            chartName: loki
-            chartVersion: 6.18.0
-            targetNamespace: observability
-            valuesPath: platform-helm/envs/dev/platform/observability/loki/values.yaml
-            syncWave: "4"
+          # - name: loki
+          #   chartRepo: https://grafana.github.io/helm-charts
+          #   chartName: loki
+          #   chartVersion: 6.18.0
+          #   targetNamespace: observability
+          #   valuesPath: platform-helm/envs/dev/platform/observability/loki/values.yaml
+          #   syncWave: "4"
 
-          - name: grafana
-            chartRepo: https://grafana.github.io/helm-charts
-            chartName: grafana
-            chartVersion: 8.5.10
-            targetNamespace: observability
-            valuesPath: platform-helm/envs/dev/platform/observability/grafana/values.yaml
-            syncWave: "4"
+          # - name: grafana
+          #   chartRepo: https://grafana.github.io/helm-charts
+          #   chartName: grafana
+          #   chartVersion: 8.5.10
+          #   targetNamespace: observability
+          #   valuesPath: platform-helm/envs/dev/platform/observability/grafana/values.yaml
+          #   syncWave: "4"
 
-          - name: kubecost
-            chartRepo: https://kubecost.github.io/cost-analyzer/
-            chartName: cost-analyzer
-            chartVersion: 1.110.0
-            targetNamespace: finops
-            valuesPath: platform-helm/envs/dev/platform/finops/kubecost/values.yaml
-            syncWave: "5"
+          # - name: kubecost
+          #   chartRepo: https://kubecost.github.io/cost-analyzer/
+          #   chartName: cost-analyzer
+          #   chartVersion: 1.110.0
+          #   targetNamespace: finops
+          #   valuesPath: platform-helm/envs/dev/platform/finops/kubecost/values.yaml
+          #   syncWave: "5"
 
   template:
     metadata:
