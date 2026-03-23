@@ -1,29 +1,6 @@
 image:
-  repository: docker.io/falcosecurity/falco
+  repository: falcosecurity/falco
   tag: "0.43.0"
-  pullPolicy: IfNotPresent
-
-driver:
-  enabled: true
-  kind: modern_ebpf
-
-  # modern eBPF does not need the separate driver-loader init container
-  loader:
-    enabled: false
-
-falcoctl:
-  image:
-    registry: docker.io
-    repository: falcosecurity/falcoctl
-    tag: "0.12.2"
-    pullPolicy: IfNotPresent
-
-  # disabled for testing
-  artifact:
-    install:
-      enabled: false
-    follow:
-      enabled: false
 
 falco:
   grpc:
