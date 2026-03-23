@@ -1,7 +1,7 @@
 admissionController:
   image:
-    repository: ghcr.io/kyverno/kyverno
-    tag: v1.12.5
+    repository: reg.kyverno.io/kyverno/kyverno
+    tag: v1.17.1
   replicas: 1
   resources:
     requests:
@@ -13,8 +13,8 @@ admissionController:
 
 backgroundController:
   image:
-    repository: ghcr.io/kyverno/background-controller
-    tag: v1.12.5
+    repository: reg.kyverno.io/kyverno/background-controller
+    tag: v1.17.1
   replicas: 1
 
 cleanupController:

@@ -51,7 +51,7 @@ spec:
           - name: kyverno
             chartRepo: https://kyverno.github.io/kyverno/
             chartName: kyverno
-            chartVersion: 3.3.4
+            chartVersion: 3.7.1
             targetNamespace: security
             valuesPath: platform-helm/envs/dev/platform/security/kyverno/values.yaml
             syncWave: "3"
