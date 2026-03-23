@@ -48,13 +48,14 @@ spec:
             valuesPath: platform-helm/envs/dev/platform/identity/keycloak/values.yaml
             syncWave: "3"
 
-          - name: kyverno
-            chartRepo: https://kyverno.github.io/kyverno/
-            chartName: kyverno
-            chartVersion: 3.7.1
-            targetNamespace: security
-            valuesPath: platform-helm/envs/dev/platform/security/kyverno/values.yaml
-            syncWave: "3"
+          # - name: kyverno
+          #   chartRepo: https://kyverno.github.io/kyverno/
+          #   chartName: kyverno
+          #   chartVersion: 3.7.1
+          #   targetNamespace: security
+          #   valuesPath: platform-helm/envs/dev/platform/security/kyverno/values.yaml
+          #   syncWave: "3"
+          # Commented out for testing
 
           - name: falco
             chartRepo: https://falcosecurity.github.io/charts
