@@ -59,7 +59,7 @@ spec:
           - name: falco
             chartRepo: https://falcosecurity.github.io/charts
             chartName: falco
-            chartVersion: 4.17.0
+            chartVersion: 8.0.1
             targetNamespace: security
             valuesPath: platform-helm/envs/dev/platform/security/falco/values.yaml
             syncWave: "3"

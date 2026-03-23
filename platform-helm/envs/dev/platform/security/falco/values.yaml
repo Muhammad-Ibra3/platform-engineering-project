@@ -1,7 +1,6 @@
 image:
-  repository: falcosecurity/falco-no-driver
-  tag: 0.38.2
-  digest: ""
+  repository: docker.io/falcosecurity/falco
+  tag: 0.43.0
 
 falco:
   grpc:
