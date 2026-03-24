@@ -8,6 +8,8 @@ This is the current layout used by Argo CD ApplicationSets and CI automation.
   - `platform-helm/charts/microservices`
 - Per-service base values inside chart:
   - `platform-helm/charts/microservices/<service>/values.yaml`
+- Vendored external charts:
+  - `platform-helm/charts/external/<chart_name>/`
 
 ## Environment Values
 

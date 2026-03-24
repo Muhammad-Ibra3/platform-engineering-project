@@ -5,6 +5,7 @@ Operational runbooks for developers and platform engineers.
 ## Quick Links
 
 - `path-reference.md` - Current authoritative path map.
+- `local-charts.md` - How to vendor local charts and pin revisions in Argo CD.
 - `add-microservice.md` - How to onboard a new microservice end-to-end.
 - `update-platform-and-dependencies.md` - How to update platform components and data/messaging dependencies.
 - `preview-environments.md` - How preview environments are generated and cleaned up.
