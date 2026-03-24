@@ -1,6 +1,6 @@
 image:
+  repository: "016257615702.dkr.ecr.us-east-1.amazonaws.com/testing"
   tag: "dev-latest"
-
 env:
   GRPC_PORT: "5001"
   LOG_LEVEL: "debug"

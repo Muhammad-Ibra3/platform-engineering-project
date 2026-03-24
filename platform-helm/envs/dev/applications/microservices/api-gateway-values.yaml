@@ -1,7 +1,7 @@
 image:
   # NOTE: The image is updated by the GitHub Actions pipelines and is deployed via ArgoCD.
+  repository: "016257615702.dkr.ecr.us-east-1.amazonaws.com/testing"
   tag: "dev-latest"
-
 ingress:
   enabled: true
   className: "traefik"
