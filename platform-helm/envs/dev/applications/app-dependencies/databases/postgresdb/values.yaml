@@ -1,7 +1,6 @@
 image:
   repository: bitnami/postgresql
   tag: "sha256:66ab173e0e1d3139a9c3f9744fea8bc991dde3e2869c5e55df38eb4d12379351"
-  digest: ""
 
 auth:
   username: app
@@ -12,7 +11,6 @@ primary:
   persistence:
     enabled: true
     size: 2Gi
-    storageClass: gp3
   resources:
     requests:
       cpu: 50m

@@ -11,5 +11,5 @@ envs/preview/microservices/preview-<PR_NUMBER>/
 
 The Argo CD **preview** ApplicationSet discovers each `preview-*` directory under `envs/preview/microservices/` and deploys using:
 
-- Chart: `general/microservices` (shared templates)
-- Values: `general/microservices/<service>/values.yaml` + this preview overlay
+- Chart: `charts/microservices` (shared templates)
+- Values: `charts/microservices/<service>/values.yaml` + this preview overlay

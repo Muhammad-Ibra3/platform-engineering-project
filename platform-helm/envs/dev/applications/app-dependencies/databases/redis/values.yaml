@@ -1,7 +1,6 @@
 image:
   repository: bitnami/redis
   tag: 7.4.1-debian-12-r2
-  digest: ""
 
 architecture: replication
 auth:
@@ -12,7 +11,6 @@ master:
   persistence:
     enabled: true
     size: 1Gi
-    storageClass: gp3
   resources:
     requests:
       cpu: 50m
