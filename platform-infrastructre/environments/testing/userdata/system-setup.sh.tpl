@@ -11,6 +11,11 @@ retry apt-get install -y \
   unzip \
   bash-completion
 
+curl -fsSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscliv2.zip
+unzip -q /tmp/awscliv2.zip -d /tmp
+/tmp/aws/install
+rm -rf /tmp/awscliv2.zip /tmp/aws
+
 # Disable swap because Kubernetes requires it
 swapoff -a || true
 sed -ri '/\sswap\s/s/^#?/#/' /etc/fstab || true
