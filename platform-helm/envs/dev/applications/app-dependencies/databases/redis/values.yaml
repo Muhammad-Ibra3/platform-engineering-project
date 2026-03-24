@@ -1,6 +1,6 @@
 image:
   repository: bitnami/redis
-  tag: 7.2.5-debian-12-r0
+  tag: "sha256-d5868793c4585162007c8d73648045ffefa2c8b45d05870e3ce2f6d5169063af"
 
 architecture: replication
 auth:

@@ -1,7 +1,6 @@
 image:
   repository: bitnami/kafka
-  tag: 3.3.1-debian-11-r11
-  digest: ""
+  tag: latest
 
 kraft:
   enabled: true
@@ -36,4 +35,4 @@ metrics:
   jmx:
     enabled: true
   serviceMonitor:
-    enabled: true
+    enabled: false

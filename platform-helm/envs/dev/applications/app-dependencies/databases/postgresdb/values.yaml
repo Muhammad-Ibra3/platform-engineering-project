@@ -1,6 +1,6 @@
 image:
   repository: bitnami/postgresql
-  tag: 16.4.0-debian-12-r0
+  tag: "sha256-a8407f46f4e63e0444bce41e391b2a5da97da1dd4286ec2e27b7e7bf4d8a60e2"
 
 auth:
   username: app
