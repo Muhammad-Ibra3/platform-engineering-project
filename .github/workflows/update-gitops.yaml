@@ -26,9 +26,6 @@ on:
       GH_TOKEN:
         required: true
 
-permissions:
-  contents: write
-
 jobs:
   update:
     runs-on: ubuntu-latest
