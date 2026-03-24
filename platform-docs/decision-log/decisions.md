@@ -43,3 +43,9 @@ This file tracks currently accepted architecture decisions.
 - **Context:** Runtime footprint had to stay lean for the current cluster profile.
 - **Decision:** Remove Trivy Operator from platform appsets; continue image scanning in CI workflows.
 - **Impact:** Reduced cluster overhead while preserving security scanning in the pipeline.
+
+## 8) Move Helm dependencies to local files
+
+- **Context:** Pulling charts directly from remote repositories at deploy time can introduce network dependence, upstream drift risk, and less predictable GitOps behavior.
+- **Decision:** Vendor and maintain required chart sources locally under `platform-helm/charts/` (including `charts/external/*` and `charts/microservices`) and use these local files as the source of truth.
+- **Impact:** More deterministic and auditable deployments, easier offline/reproducible testing, and simpler change review because chart/template changes are versioned in this repository.
