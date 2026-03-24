@@ -25,8 +25,6 @@ on:
     secrets:
       GH_TOKEN:
         required: true
-      ECR_REGISTRY:
-        required: true
 
 jobs:
   update:
@@ -67,7 +65,6 @@ jobs:
         env:
           TAG: ${{ inputs.image_tag }}
           PR_NUM: ${{ env.PR_NUM }}
-          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
         run: |
           set -euo pipefail
 
@@ -106,8 +103,6 @@ jobs:
                 ;;
             esac
 
-            IMAGE_REPO="${ECR_REGISTRY}/${{ inputs.service }}" # TODO: add the repository name here
-
             src="${DEV_DIR}/${service}-values.yaml"
             dst="${PREVIEW_DIR}/${service}-values.yaml"
 
@@ -117,7 +112,6 @@ jobs:
               printf 'image:\n  tag: "%s"\n' "$TAG" > "$dst"
             fi
 
-            yq -i '.image.repository = strenv(IMAGE_REPO)' "$dst"
             yq -i '.image.tag = strenv(TAG)' "$dst"
 
             if [ "$service" = "api-gateway" ]; then
