@@ -106,7 +106,7 @@ jobs:
                 ;;
             esac
 
-            IMAGE_REPO="${ECR_REGISTRY}" # TODO: add the repository name here
+            IMAGE_REPO="${ECR_REGISTRY}/${{ inputs.service }}" # TODO: add the repository name here
 
             src="${DEV_DIR}/${service}-values.yaml"
             dst="${PREVIEW_DIR}/${service}-values.yaml"

@@ -59,7 +59,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          image_ref="${{ secrets.ECR_REGISTRY }}:${{ inputs.image_tag }}" # TODO: add the repository name here e.g. /${{ inputs.service }}
+          image_ref="${{ secrets.ECR_REGISTRY }}/${{ inputs.service }}:${{ inputs.image_tag }}"
           echo "image_ref=$image_ref" >> "$GITHUB_OUTPUT"
 
       - name: Tag image for ECR
