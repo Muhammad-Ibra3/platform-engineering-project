@@ -49,6 +49,6 @@ jobs:
             exit 0
           fi
 
-          git pull --rebase origin main
           git commit -m "Remove preview env ${{ inputs.pr_number }} [skip ci]"
+          git pull --rebase origin main
           git push origin HEAD:main
