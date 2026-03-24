@@ -1,0 +1,56 @@
+name: "[DEPRECATED] Push Image"
+
+on:
+  workflow_call:
+    inputs:
+      service:
+        required: true
+        type: string
+      image_tag:
+        required: false
+        type: string
+        default: ${{ github.sha }}
+      image_artifact:
+        required: true
+        type: string
+    outputs:
+      image_ref:
+        description: Fully qualified pushed image reference
+        value: ${{ jobs.expose-output.outputs.image_ref }}
+    secrets:
+      AWS_ROLE:
+        required: true
+      ECR_REGISTRY:
+        required: true
+
+jobs:
+  deprecation-notice:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deprecation warning
+        shell: bash
+        run: |
+          echo "::warning file=.github/workflows/ci-tasks/push-image.yaml,title=Deprecated workflow::This workflow is deprecated. Use .github/workflows/ci-tasks/push-and-sign.yaml instead."
+
+  push-and-sign:
+    needs: deprecation-notice
+    uses: ./.github/workflows/ci-tasks/push-and-sign.yaml
+    with:
+      service: ${{ inputs.service }}
+      image_tag: ${{ inputs.image_tag }}
+      image_artifact: ${{ inputs.image_artifact }}
+    secrets:
+      AWS_ROLE: ${{ secrets.AWS_ROLE }}
+      ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+
+  expose-output:
+    needs: push-and-sign
+    runs-on: ubuntu-latest
+    outputs:
+      image_ref: ${{ steps.out.outputs.image_ref }}
+    steps:
+      - name: Set image output
+        id: out
+        shell: bash
+        run: |
+          echo "image_ref=${{ needs.push-and-sign.outputs.image_ref }}" >> "$GITHUB_OUTPUT"
