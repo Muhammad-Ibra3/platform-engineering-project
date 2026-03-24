@@ -50,3 +50,18 @@ variable "k3s_version" {
   type        = string
   default     = "v1.32.3+k3s1"
 }
+
+variable "github_actions_role_name" {
+  description = "IAM role name assumed by GitHub Actions for ECR access."
+  type        = string
+  default     = "github-actions-ecr-testing"
+}
+
+variable "github_oidc_repositories" {
+  description = "List of GitHub repositories allowed to assume the GitHub Actions IAM role (org/repo format)."
+  type        = list(string)
+  default = [
+    "Muhammad-Ibra3/platform-engineering-project",
+    "Muhammad-Ibra3/microservices-apps-project",
+  ]
+}
