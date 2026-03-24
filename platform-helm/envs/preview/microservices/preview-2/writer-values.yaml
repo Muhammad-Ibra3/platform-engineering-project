@@ -1,0 +1,25 @@
+image:
+  repository: ""
+  tag: "b5423a9b0ee426701ba003ab303e3e3cc1ded1ed"
+env:
+  GRPC_PORT: "5000"
+  LOG_LEVEL: "debug"
+  KAFKA_BROKERS: "kafka.message-broker.svc.cluster.local:9092"
+  POSTGRES_HOST: "postgresql.database.svc.cluster.local"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "products"
+  POSTGRES_USER: "postgres"
+  REDIS_ADDR: "redis.database.svc.cluster.local:6379"
+  MONGO_URI: "mongodb://mongodb.database.svc.cluster.local:27017"
+# Injects the Vault-managed secret created by ESO
+secretEnv:
+  POSTGRES_PASSWORD:
+    secretName: vault-postgres-credentials
+    secretKey: password
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 250m
+    memory: 512Mi

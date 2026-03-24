@@ -1,0 +1,25 @@
+image:
+  # NOTE: The image is updated by the GitHub Actions pipelines and is deployed via ArgoCD.
+  repository: ""
+  tag: "b5423a9b0ee426701ba003ab303e3e3cc1ded1ed"
+ingress:
+  enabled: true
+  className: "traefik"
+  hosts:
+    - host: api.preview-2.dev.example.local
+      paths:
+        - path: /
+          pathType: Prefix
+env:
+  PORT: "8080"
+  LOG_LEVEL: "debug"
+  KAFKA_BROKERS: "kafka.message-broker.svc.cluster.local:9092"
+  WRITER_GRPC_PORT: "writer:5000"
+  READER_GRPC_PORT: "reader:5001"
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 250m
+    memory: 256Mi
