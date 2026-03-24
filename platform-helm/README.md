@@ -4,7 +4,7 @@
 
 This directory contains **Helm charts and environment values** for platform workloads and microservices.
 
-- **`general/`** — Reusable Helm chart sources (templates + default `values.yaml` per subchart).
+- **`charts/`** — Reusable Helm chart sources (templates + default `values.yaml` per subchart).
 - **`envs/`** — Environment-specific value files only (no duplicated `templates/` per env).
 
 Argo CD ApplicationSets under `platform-gitops/env-appsets/` point at these paths.
@@ -15,7 +15,7 @@ Argo CD ApplicationSets under `platform-gitops/env-appsets/` point at these path
 
 ```
 platform-helm
-├── general
+├── charts
 │   └── microservices/           # Helm chart: Chart.yaml, templates/, <service>/values.yaml
 │       ├── api-gateway/
 │       ├── reader/
@@ -43,7 +43,7 @@ platform-helm
 
 | Workload        | Chart path                         | Env values |
 |----------------|-------------------------------------|------------|
-| Microservices  | `general/microservices`             | `envs/<env>/applications/microservices/<service>-values.yaml` |
+| Microservices  | `charts/microservices`             | `envs/<env>/applications/microservices/<service>-values.yaml` |
 | Dependencies   | Upstream Bitnami chart (no local chart) | `envs/<env>/applications/app-dependencies/.../values.yaml` |
 | Platform stack | Upstream charts                     | `envs/<env>/platform/.../values.yaml` (+ Falco rules from `platform-security/`) |
 
@@ -57,6 +57,6 @@ Charts are deployed via **Argo CD** (GitOps), not manual `helm install` in produ
 
 ## Design goals
 
-- One place for shared Helm logic (`general/`).
+- One place for shared Helm logic (`charts/`).
 - Clear env separation under `envs/` without copying templates.
 - Independent lifecycle per workload via Application / ApplicationSet entries.
