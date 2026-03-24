@@ -18,7 +18,7 @@ variable "instance_ami" {
 variable "instance_type" {
   description = "EC2 instance type for the k3s node."
   type        = string
-  default     = "m7i-flex.large"
+  default     = "m7i-flex.xlarge"
 }
 
 variable "key_name" {
