@@ -2,7 +2,7 @@ image:
   repository: bitnami/redis
   tag: latest
 
-architecture: replication
+architecture: standalone
 auth:
   enabled: true
   existingSecret: redis-auth
