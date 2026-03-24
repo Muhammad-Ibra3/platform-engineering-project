@@ -1,6 +1,6 @@
 image:
   repository: ""
-  tag: "b5423a9b0ee426701ba003ab303e3e3cc1ded1ed"
+  tag: "2ca7cfd2962c30ddac9fdfe37756c8e85fe6463b"
 env:
   GRPC_PORT: "5001"
   LOG_LEVEL: "debug"
