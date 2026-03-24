@@ -6,7 +6,7 @@ This guide walks through adding a new service (example: `billing`) to dev/prod/p
 
 Create:
 
-- `platform-helm/general/microservices/billing/values.yaml`
+- `platform-helm/charts/microservices/billing/values.yaml`
 
 Start by copying one of the existing service value files (for example `reader/values.yaml`) and changing names, image repository, ports, and probes.
 

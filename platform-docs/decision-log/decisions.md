@@ -29,7 +29,7 @@ This file tracks currently accepted architecture decisions.
 ## 5) Split Helm chart logic from environment values
 
 - **Context:** Duplicating Helm templates per environment caused maintenance overhead and path drift.
-- **Decision:** Keep reusable chart source in `platform-helm/general/microservices` and all environment differences under `platform-helm/envs/<env>/...`.
+- **Decision:** Keep reusable chart source in `platform-helm/charts/microservices` and all environment differences under `platform-helm/envs/<env>/...`.
 - **Impact:** Cleaner ownership boundaries, easier path reasoning, and faster onboarding.
 
 ## 6) Directory-driven preview environments

@@ -33,7 +33,7 @@
 ## Where to change what
 
 - Change chart templates/defaults:
-  - `platform-helm/general/microservices`
+  - `platform-helm/charts/microservices`
 - Change environment behavior:
   - `platform-helm/envs/<env>/...`
 - Change orchestration/order/components:

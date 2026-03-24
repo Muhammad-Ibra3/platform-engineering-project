@@ -13,7 +13,7 @@ Operational runbooks for developers and platform engineers.
 
 ## Core Conventions
 
-- Keep the reusable microservice Helm chart under `platform-helm/general/microservices`.
+- Keep the reusable microservice Helm chart under `platform-helm/charts/microservices`.
 - Keep environment values under `platform-helm/envs/<env>/...`.
 - Keep deployment orchestration under `platform-gitops/env-appsets/...`.
 - Prefer explicit values files (`ignoreMissingValueFiles: false` in most appsets), so missing files fail fast.

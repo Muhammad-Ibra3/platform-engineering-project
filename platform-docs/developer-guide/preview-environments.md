@@ -39,5 +39,5 @@ Preview environments are created from PR context and reconciled by Argo CD Appli
 ## Common failure modes
 
 - Missing overlay file for service.
-- Service exists in appset but not in chart base (`general/microservices/<service>/values.yaml`).
+- Service exists in appset but not in chart base (`charts/microservices/<service>/values.yaml`).
 - Incorrect preview folder path (must be directly under `envs/preview/microservices/`).

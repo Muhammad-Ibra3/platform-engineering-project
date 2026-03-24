@@ -47,7 +47,7 @@ platform-gitops/
 │ └── preview/
 
 platform-helm/
-├── general/
+├── charts/
 │ └── microservices/
 ├── envs/
 │ ├── dev/

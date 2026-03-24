@@ -9,90 +9,68 @@ spec:
     - list:
         elements:
           - name: cilium
-            chartRepo: https://helm.cilium.io/
-            chartName: cilium
-            chartVersion: 1.19.1
+            chartPath: platform-helm/charts/external/cilium
             targetNamespace: kube-system
             valuesPath: platform-helm/envs/dev/platform/cluster-networking/cilium/values.yaml
             syncWave: "0"
 
           - name: cert-manager
-            chartRepo: https://charts.jetstack.io
-            chartName: cert-manager
-            chartVersion: v1.16.0
+            chartPath: platform-helm/charts/external/cert-manager
             targetNamespace: cert-manager
             valuesPath: platform-helm/envs/dev/platform/ingress/cert-manager/values.yaml
             syncWave: "1"
 
           - name: traefik
-            chartRepo: https://traefik.github.io/charts
-            chartName: traefik
-            chartVersion: 31.0.0
+            chartPath: platform-helm/charts/external/traefik
             targetNamespace: ingress
             valuesPath: platform-helm/envs/dev/platform/ingress/traefik/values.yaml
             syncWave: "2"
 
           - name: vault
-            chartRepo: https://helm.releases.hashicorp.com
-            chartName: vault
-            chartVersion: 0.28.1
+            chartPath: platform-helm/charts/external/vault
             targetNamespace: secrets
             valuesPath: platform-helm/envs/dev/platform/secrets/vault/values.yaml
             syncWave: "2"
 
           # - name: keycloak
-          #   chartRepo: https://charts.bitnami.com/bitnami
-          #   chartName: keycloak
-          #   chartVersion: 25.2.0
+          #   chartPath: platform-helm/charts/external/keycloak
           #   targetNamespace: identity
           #   valuesPath: platform-helm/envs/dev/platform/identity/keycloak/values.yaml
           #   syncWave: "3"
 
           # - name: kyverno
-          #   chartRepo: https://kyverno.github.io/kyverno/
-          #   chartName: kyverno
-          #   chartVersion: 3.7.1
+          #   chartPath: platform-helm/charts/external/kyverno
           #   targetNamespace: security
           #   valuesPath: platform-helm/envs/dev/platform/security/kyverno/values.yaml
           #   syncWave: "3"
           # Commented out for testing
 
           # - name: falco
-          #   chartRepo: https://falcosecurity.github.io/charts
-          #   chartName: falco
-          #   chartVersion: 8.0.1
+          #   chartPath: platform-helm/charts/external/falco
           #   targetNamespace: security
           #   valuesPath: platform-helm/envs/dev/platform/security/falco/values.yaml
           #   syncWave: "3"
 
           # - name: prometheus
-          #   chartRepo: https://prometheus-community.github.io/helm-charts
-          #   chartName: prometheus
-          #   chartVersion: 26.0.1
+          #   chartPath: platform-helm/charts/external/prometheus
           #   targetNamespace: observability
           #   valuesPath: platform-helm/envs/dev/platform/observability/prometheus/values.yaml
           #   syncWave: "4"
 
           # - name: loki
-          #   chartRepo: https://grafana.github.io/helm-charts
-          #   chartName: loki
-          #   chartVersion: 6.18.0
+          #   chartPath: platform-helm/charts/external/loki
           #   targetNamespace: observability
           #   valuesPath: platform-helm/envs/dev/platform/observability/loki/values.yaml
           #   syncWave: "4"
 
           # - name: grafana
-          #   chartRepo: https://grafana.github.io/helm-charts
-          #   chartName: grafana
-          #   chartVersion: 8.5.10
+          #   chartPath: platform-helm/charts/external/grafana
           #   targetNamespace: observability
           #   valuesPath: platform-helm/envs/dev/platform/observability/grafana/values.yaml
           #   syncWave: "4"
 
           # - name: kubecost
-          #   chartRepo: https://kubecost.github.io/cost-analyzer/
-          #   chartName: cost-analyzer
-          #   chartVersion: 1.110.0
+          #   chartPath: platform-helm/charts/external/kubecost
           #   targetNamespace: finops
           #   valuesPath: platform-helm/envs/dev/platform/finops/kubecost/values.yaml
           #   syncWave: "5"
@@ -110,21 +88,14 @@ spec:
     spec:
       project: default
 
-      sources:
-        # Helm chart source
-        - repoURL: '{{.chartRepo}}'
-          chart: '{{.chartName}}'
-          targetRevision: '{{.chartVersion}}'
-          helm:
-            releaseName: '{{.name}}'
-            ignoreMissingValueFiles: false
-            valueFiles:
-              - '$myvalues/{{.valuesPath}}'
-
-        # Values repo
-        - repoURL: 'https://github.com/Muhammad-Ibra3/platform-engineering-project.git'
-          targetRevision: main
-          ref: myvalues
+      source:
+        repoURL: 'https://github.com/Muhammad-Ibra3/platform-engineering-project.git'
+        targetRevision: main
+        path: '{{.chartPath}}'
+        helm:
+          releaseName: '{{.name}}'
+          valueFiles:
+            - '../../../../{{.valuesPath}}'
 
       destination:
         server: 'https://kubernetes.default.svc'
@@ -135,7 +106,7 @@ spec:
           prune: true
           selfHeal: true
         retry:
-          limit: 3  
+          limit: 3
           backoff:
             duration: 5s
             factor: 2

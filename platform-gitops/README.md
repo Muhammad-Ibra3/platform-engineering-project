@@ -182,7 +182,7 @@ Applications are deployed using sync waves:
 2. Create base Helm values:
 
    ```
-   platform-helm/general/microservices/<service>/values.yaml
+   platform-helm/charts/microservices/<service>/values.yaml
    ```
 3. Add environment-specific values:
 

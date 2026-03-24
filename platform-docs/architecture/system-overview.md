@@ -9,7 +9,7 @@ This platform provides a GitOps-managed runtime for microservices, platform serv
 - **Infrastructure bootstrap**: Terraform and bootstrap manifests install Argo CD and point it at environment appsets.
 - **GitOps control plane**: Argo CD + ApplicationSets continuously reconcile desired state from Git.
 - **Helm sources**:
-  - Shared chart logic in `platform-helm/general/microservices`
+  - Shared chart logic in `platform-helm/charts/microservices`
   - Environment values in `platform-helm/envs/<env>/...`
 - **Policy and runtime security**:
   - Kyverno policies from `platform-security/kyverno`

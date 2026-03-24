@@ -5,9 +5,9 @@ This is the current layout used by Argo CD ApplicationSets and CI automation.
 ## Helm Sources
 
 - Shared microservice chart:
-  - `platform-helm/general/microservices`
+  - `platform-helm/charts/microservices`
 - Per-service base values inside chart:
-  - `platform-helm/general/microservices/<service>/values.yaml`
+  - `platform-helm/charts/microservices/<service>/values.yaml`
 
 ## Environment Values
 
