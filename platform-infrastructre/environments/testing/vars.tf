@@ -51,6 +51,18 @@ variable "k3s_version" {
   default     = "v1.32.3+k3s1"
 }
 
+variable "k3s_node_role_name" {
+  description = "IAM role name attached to the k3s EC2 node."
+  type        = string
+  default     = "k3s-node-ecr-pull-only"
+}
+
+variable "k3s_node_instance_profile_name" {
+  description = "IAM instance profile name attached to the k3s EC2 node."
+  type        = string
+  default     = "k3s-node-ecr-pull-only-testing"
+}
+
 variable "github_actions_role_name" {
   description = "IAM role name assumed by GitHub Actions for ECR access."
   type        = string
@@ -64,4 +76,10 @@ variable "github_oidc_repositories" {
     "Muhammad-Ibra3/platform-engineering-project",
     "Muhammad-Ibra3/microservices-apps-project",
   ]
+}
+
+variable "ecr_credential_provider_version" {
+  description = "Pinned upstream cloud-provider-aws ecr-credential-provider version. Keep this on the same Kubernetes minor as k3s."
+  type        = string
+  default     = "v1.32.7"
 }

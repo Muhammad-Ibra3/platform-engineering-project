@@ -8,6 +8,16 @@ output "k3s_public_dns" {
   value       = aws_instance.k3s_node.public_dns
 }
 
+output "k3s_node_role_arn" {
+  description = "IAM role ARN attached to the k3s EC2 node."
+  value       = aws_iam_role.k3s_node.arn
+}
+
+output "k3s_node_instance_profile_name" {
+  description = "IAM instance profile attached to the k3s EC2 node."
+  value       = aws_iam_instance_profile.k3s_node.name
+}
+
 output "microservice_ecr_repository_urls" {
   description = "Map of microservice name to ECR repository URL."
   value       = { for name, repo in aws_ecr_repository.microservices : name => repo.repository_url }

@@ -2,6 +2,7 @@ resource "aws_instance" "k3s_node" {
   ami           = var.instance_ami
   instance_type = var.instance_type
 
+  iam_instance_profile        = aws_iam_instance_profile.k3s_node.name
   vpc_security_group_ids      = [aws_security_group.k3s_testing_sg.id]
   key_name                    = var.key_name
   user_data_replace_on_change = true
@@ -20,14 +21,19 @@ resource "aws_instance" "k3s_node" {
   }
 
   user_data = templatefile("${path.module}/userdata/bootstrap.sh.tpl", {
-    k3s_version       = var.k3s_version
-    functions_sh      = file("${path.module}/userdata/functions.sh.tpl")
-    system_setup_sh   = file("${path.module}/userdata/system-setup.sh.tpl")
-    k3s_install_sh    = file("${path.module}/userdata/k3s-install.sh.tpl")
-    shell_setup_sh    = file("${path.module}/userdata/shell-setup.sh.tpl")
-    argocd_bootstrap  = file("${path.module}/userdata/argocd-bootstrap.sh.tpl")
-    cleanup_sh        = file("${path.module}/userdata/cleanup.sh.tpl")
+    k3s_version          = var.k3s_version
+    ecr_provider_version = var.ecr_credential_provider_version
+    functions_sh         = file("${path.module}/userdata/functions.sh.tpl")
+    system_setup_sh      = file("${path.module}/userdata/system-setup.sh.tpl")
+    k3s_install_sh       = file("${path.module}/userdata/k3s-install.sh.tpl")
+    shell_setup_sh       = file("${path.module}/userdata/shell-setup.sh.tpl")
+    argocd_bootstrap     = file("${path.module}/userdata/argocd-bootstrap.sh.tpl")
+    cleanup_sh           = file("${path.module}/userdata/cleanup.sh.tpl")
   })
+
+  depends_on = [
+    aws_iam_instance_profile.k3s_node,
+  ]
 
   tags = merge(local.common_tags, {
     Name = var.instance_name
