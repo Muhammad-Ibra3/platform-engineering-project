@@ -9,7 +9,8 @@ retry apt-get install -y \
   jq \
   git \
   unzip \
-  bash-completion
+  bash-completion \
+  golang-go
 
 curl -fsSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscliv2.zip
 unzip -q /tmp/awscliv2.zip -d /tmp

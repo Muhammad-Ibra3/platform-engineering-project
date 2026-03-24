@@ -1,5 +1,5 @@
 # ==============================================================================
-# Install k3s and prepare kubeconfig
+# Install k3s and configure kubelet ECR credential provider
 # ==============================================================================
 
 # Read EC2 metadata securely using IMDSv2
@@ -15,31 +15,56 @@ PRIVATE_IP=$(curl -fsSL -H "X-aws-ec2-metadata-token: ${TOKEN}" \
 API_IP="${PUBLIC_IP:-${PRIVATE_IP}}"
 
 mkdir -p /etc/rancher/k3s
+mkdir -p /var/lib/rancher/credentialprovider/bin
+mkdir -p /var/lib/rancher/credentialprovider
 
-# Write k3s config with a TLS SAN matching the public IP if available
+# Build the official AWS ECR kubelet credential provider binary.
+# Keep this version on the same Kubernetes minor as the installed k3s version.
+# Set Go environment for non-interactive shell
+export GOPATH=/usr/local/go-work
+export GOMODCACHE=$GOPATH/pkg/mod
+export GOCACHE=$GOPATH/cache
+
+mkdir -p "$GOMODCACHE" "$GOCACHE" "$GOPATH/bin"
+
+# Build and install ECR credential provider
+GOBIN=/var/lib/rancher/credentialprovider/bin \
+  go install "k8s.io/cloud-provider-aws/cmd/ecr-credential-provider@${ECR_PROVIDER_VERSION}"
+
+chmod 0755 /var/lib/rancher/credentialprovider/bin/ecr-credential-provider
+
+# Configure kubelet credential provider for ECR.
+# ECR auth tokens are valid for 12 hours, so cache a little below that.
+cat >/var/lib/rancher/credentialprovider/config.yaml <<'EOM'
+apiVersion: kubelet.config.k8s.io/v1
+kind: CredentialProviderConfig
+providers:
+  - name: ecr-credential-provider
+    matchImages:
+      - "*.dkr.ecr.*.amazonaws.com"
+      - "*.dkr.ecr.*.amazonaws.com.cn"
+    apiVersion: credentialprovider.kubelet.k8s.io/v1
+    defaultCacheDuration: "11h"
+EOM
+
+chmod 0644 /var/lib/rancher/credentialprovider/config.yaml
+
+# Write k3s config with kubelet args for the credential provider.
 cat >/etc/rancher/k3s/config.yaml <<EOM
 write-kubeconfig-mode: "0644"
 tls-san:
   - "${API_IP}"
+kubelet-arg:
+  - image-credential-provider-bin-dir=/var/lib/rancher/credentialprovider/bin
+  - image-credential-provider-config=/var/lib/rancher/credentialprovider/config.yaml
 EOM
 
-# Install pinned k3s version
+# Install k3s
 curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="${K3S_VERSION}" sh -
 
-systemctl enable k3s
-systemctl restart k3s
-
-retry systemctl is-active --quiet k3s
-
-export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
-
+# Wait until kubectl can talk to the cluster
 wait_for_kubectl
 
-# Wait until at least one node appears
-echo "Waiting for node to register..."
-until /usr/local/bin/kubectl get nodes | grep -q " Ready\| NotReady"; do
-  sleep 5
-done
-
-# Now wait until it's Ready
-/usr/local/bin/kubectl wait --for=condition=Ready node --all --timeout=300s
+# Quick sanity checks in the log
+/usr/local/bin/kubectl get nodes -o wide
+/usr/local/bin/kubectl -n kube-system get pods

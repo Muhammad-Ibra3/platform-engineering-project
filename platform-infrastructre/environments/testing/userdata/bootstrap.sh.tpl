@@ -10,6 +10,7 @@ exec > >(tee /var/log/user-data.log | logger -t user-data -s 2>/dev/console) 2>&
 
 export DEBIAN_FRONTEND=noninteractive
 export K3S_VERSION="${k3s_version}"
+export ECR_PROVIDER_VERSION="${ecr_provider_version}"
 export INSTALL_K3S_EXEC="server"
 
 # ------------------------------------------------------------------------------
