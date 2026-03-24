@@ -6,7 +6,7 @@ fullnameOverride: "reader"
 
 replicaCount: 1
 image:
-  repository: your-dockerhub-user/reader-service
+  repository: "016257615702.dkr.ecr.us-east-1.amazonaws.com/reader"
   tag: "latest"
   pullPolicy: Always
 

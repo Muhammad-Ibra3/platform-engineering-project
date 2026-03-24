@@ -6,7 +6,7 @@ fullnameOverride: "writer"
 
 replicaCount: 1
 image:
-  repository: your-dockerhub-user/writer-service
+  repository: "016257615702.dkr.ecr.us-east-1.amazonaws.com/writer"
   tag: "latest"
   pullPolicy: Always
 

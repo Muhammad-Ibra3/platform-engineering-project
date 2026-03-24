@@ -6,7 +6,7 @@ fullnameOverride: "api-gateway"
 
 replicaCount: 1
 image:
-  repository: your-dockerhub-user/api-gateway
+  repository: "016257615702.dkr.ecr.us-east-1.amazonaws.com/api-gateway"
   tag: "latest"
   pullPolicy: Always
 
