@@ -14,7 +14,7 @@ env:
 # Injects the Vault-managed secret created by ESO
 secretEnv:
   MONGO_PASSWORD:
-    secretName: vault-mongo-credentials
+    secretName: mongodb-auth #TODO: Change to "vault-mongo-credentials"
     secretKey: password
 
 resources:

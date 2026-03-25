@@ -15,7 +15,7 @@ env:
 # Injects the Vault-managed secret created by ESO
 secretEnv:
   POSTGRES_PASSWORD:
-    secretName: vault-postgres-credentials
+    secretName: postgresql-auth #TODO: Change to "vault-postgres-credentials" 
     secretKey: password
 
 resources:
