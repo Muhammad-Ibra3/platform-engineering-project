@@ -1,6 +1,6 @@
 image:
   repository: "016257615702.dkr.ecr.us-east-1.amazonaws.com/writer"
-  tag: "2ca7cfd2962c30ddac9fdfe37756c8e85fe6463b"
+  tag: "e90cc3c8577262e719487acb0ccac39645d4d318"
 env:
   GRPC_PORT: "5000"
   LOG_LEVEL: "debug"
