@@ -14,29 +14,29 @@ spec:
             valuesPath: platform-helm/envs/dev/platform/cluster-networking/cilium/values.yaml
             syncWave: "0"
 
-          # - name: cert-manager
-          #   chartPath: platform-helm/charts/external/cert-manager
-          #   targetNamespace: cert-manager
-          #   valuesPath: platform-helm/envs/dev/platform/ingress/cert-manager/values.yaml
-          #   syncWave: "1"
+          - name: cert-manager
+            chartPath: platform-helm/charts/external/cert-manager
+            targetNamespace: cert-manager
+            valuesPath: platform-helm/envs/dev/platform/ingress/cert-manager/values.yaml
+            syncWave: "1"
 
-          # - name: traefik
-          #   chartPath: platform-helm/charts/external/traefik
-          #   targetNamespace: ingress
-          #   valuesPath: platform-helm/envs/dev/platform/ingress/traefik/values.yaml
-          #   syncWave: "2"
+          - name: traefik
+            chartPath: platform-helm/charts/external/traefik
+            targetNamespace: ingress
+            valuesPath: platform-helm/envs/dev/platform/ingress/traefik/values.yaml
+            syncWave: "2"
 
-          # - name: vault
-          #   chartPath: platform-helm/charts/external/vault
-          #   targetNamespace: secrets
-          #   valuesPath: platform-helm/envs/dev/platform/secrets/vault/values.yaml
-          #   syncWave: "2"
+          - name: vault
+            chartPath: platform-helm/charts/external/vault
+            targetNamespace: secrets
+            valuesPath: platform-helm/envs/dev/platform/secrets/vault/values.yaml
+            syncWave: "2"
 
-          # - name: keycloak
-          #   chartPath: platform-helm/charts/external/keycloak
-          #   targetNamespace: identity
-          #   valuesPath: platform-helm/envs/dev/platform/identity/keycloak/values.yaml
-          #   syncWave: "3"
+          - name: keycloak
+            chartPath: platform-helm/charts/external/keycloak
+            targetNamespace: identity
+            valuesPath: platform-helm/envs/dev/platform/identity/keycloak/values.yaml
+            syncWave: "3"
 
           # - name: kyverno
           #   chartPath: platform-helm/charts/external/kyverno
@@ -45,35 +45,35 @@ spec:
           #   syncWave: "3"
           # Commented out for testing
 
-          # - name: falco
-          #   chartPath: platform-helm/charts/external/falco
-          #   targetNamespace: security
-          #   valuesPath: platform-helm/envs/dev/platform/security/falco/values.yaml
-          #   syncWave: "3"
+          - name: falco
+            chartPath: platform-helm/charts/external/falco
+            targetNamespace: security
+            valuesPath: platform-helm/envs/dev/platform/security/falco/values.yaml
+            syncWave: "3"
 
-          # - name: prometheus
-          #   chartPath: platform-helm/charts/external/prometheus
-          #   targetNamespace: observability
-          #   valuesPath: platform-helm/envs/dev/platform/observability/prometheus/values.yaml
-          #   syncWave: "4"
+          - name: prometheus
+            chartPath: platform-helm/charts/external/prometheus
+            targetNamespace: observability
+            valuesPath: platform-helm/envs/dev/platform/observability/prometheus/values.yaml
+            syncWave: "4"
 
-          # - name: loki
-          #   chartPath: platform-helm/charts/external/loki
-          #   targetNamespace: observability
-          #   valuesPath: platform-helm/envs/dev/platform/observability/loki/values.yaml
-          #   syncWave: "4"
+          - name: loki
+            chartPath: platform-helm/charts/external/loki
+            targetNamespace: observability
+            valuesPath: platform-helm/envs/dev/platform/observability/loki/values.yaml
+            syncWave: "4"
 
-          # - name: grafana
-          #   chartPath: platform-helm/charts/external/grafana
-          #   targetNamespace: observability
-          #   valuesPath: platform-helm/envs/dev/platform/observability/grafana/values.yaml
-          #   syncWave: "4"
+          - name: grafana
+            chartPath: platform-helm/charts/external/grafana
+            targetNamespace: observability
+            valuesPath: platform-helm/envs/dev/platform/observability/grafana/values.yaml
+            syncWave: "4"
 
-          # - name: kubecost
-          #   chartPath: platform-helm/charts/external/kubecost
-          #   targetNamespace: finops
-          #   valuesPath: platform-helm/envs/dev/platform/finops/kubecost/values.yaml
-          #   syncWave: "5"
+          - name: kubecost
+            chartPath: platform-helm/charts/external/kubecost
+            targetNamespace: finops
+            valuesPath: platform-helm/envs/dev/platform/finops/kubecost/values.yaml
+            syncWave: "5"
 
   template:
     metadata:
