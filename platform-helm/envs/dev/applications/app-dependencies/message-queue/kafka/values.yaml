@@ -4,6 +4,9 @@ image:
   tag: 4.0.0-debian-12-r10
   pullPolicy: IfNotPresent
 
+auth:
+  enabled: false
+
 kraft:
   enabled: true
 
@@ -31,7 +34,21 @@ broker:
       minReplicas: 1
       maxReplicas: 2
       targetCPU: 70
+listeners:
+  client:
+    protocol: PLAINTEXT
+    containerPort: 9092
+  interbroker:
+    protocol: PLAINTEXT
+    containerPort: 9094
+  controller:
+    protocol: PLAINTEXT
+    containerPort: 9093
 
+listenerSecurityProtocolMap:
+  CLIENT: PLAINTEXT
+  INTERNAL: PLAINTEXT
+  CONTROLLER: PLAINTEXT
 metrics:
   kafka:
     enabled: false
