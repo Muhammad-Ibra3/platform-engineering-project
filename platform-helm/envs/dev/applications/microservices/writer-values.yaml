@@ -1,6 +1,7 @@
 image:
   repository: "016257615702.dkr.ecr.us-east-1.amazonaws.com/writer"
   tag: "e90cc3c8577262e719487acb0ccac39645d4d318"
+
 env:
   GRPC_PORT: "5000"
   LOG_LEVEL: "debug"
@@ -10,13 +11,14 @@ env:
   POSTGRES_DB: "products"
   POSTGRES_USER: "postgres"
   REDIS_ADDR: "redis.database.svc.cluster.local:6379"
-  MONGO_URI: "mongodb://mongodb.database.svc.cluster.local:27017"
 
-# Injects the Vault-managed secret created by ESO
 secretEnv:
   POSTGRES_PASSWORD:
-    secretName: postgresql-auth #TODO: Change to "vault-postgres-credentials" 
-    secretKey: password
+    secretName: writer-db-secret
+    secretKey: POSTGRES_PASSWORD
+  MONGO_URI:
+    secretName: mongo-uri-secret
+    secretKey: MONGO_URI
 
 resources:
   requests:
