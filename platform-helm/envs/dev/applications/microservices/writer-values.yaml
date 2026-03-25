@@ -3,7 +3,7 @@ image:
   tag: "e90cc3c8577262e719487acb0ccac39645d4d318"
 
 env:
-  GRPC_PORT: "5000"
+  GRPC_PORT: ":5000"
   LOG_LEVEL: "debug"
   KAFKA_BROKERS: "kafka.message-broker.svc.cluster.local:9092"
   POSTGRES_HOST: "postgresql.database.svc.cluster.local"
