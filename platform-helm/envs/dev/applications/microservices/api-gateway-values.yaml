@@ -1,7 +1,7 @@
 image:
   # NOTE: The image is updated by the GitHub Actions pipelines and is deployed via ArgoCD.
   repository: "016257615702.dkr.ecr.us-east-1.amazonaws.com/api-gateway"
-  tag: "e90cc3c8577262e719487acb0ccac39645d4d318"
+  tag: "b18fd22c61df9da22ca42a89df7180ad2f3e9374"
 ingress:
   enabled: true
   className: "traefik"
