@@ -36,6 +36,6 @@ metrics:
   kafka:
     enabled: false
   jmx:
-    enabled: true
+    enabled: false
   serviceMonitor:
     enabled: false
