@@ -34,7 +34,7 @@ broker:
 
 metrics:
   kafka:
-    enabled: true
+    enabled: false
   jmx:
     enabled: true
   serviceMonitor:
