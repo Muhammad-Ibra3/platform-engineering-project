@@ -1,4 +1,5 @@
 image:
+  registry: registry-1.docker.io
   repository: bitnami/mongodb
   tag: latest
 

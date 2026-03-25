@@ -1,5 +1,5 @@
 image:
-  registry: docker.io
+  registry: registry-1.docker.io
   repository: bitnami/redis
   tag: 7.0.10-debian-11-r4
 
