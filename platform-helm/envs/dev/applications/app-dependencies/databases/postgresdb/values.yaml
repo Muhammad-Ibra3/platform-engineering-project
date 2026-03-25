@@ -4,7 +4,6 @@ image:
   tag: latest
 
 auth:
-  username: app
   database: products
   existingSecret: postgresql-auth
 
