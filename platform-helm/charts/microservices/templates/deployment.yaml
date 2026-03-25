@@ -24,6 +24,16 @@ spec:
               containerPort: {{ .targetPort }}
               protocol: TCP
             {{- end }}
+          {{- if .Values.secretEnv }}
+          env:
+            {{- range $name, $ref := .Values.secretEnv }}
+            - name: {{ $name }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $ref.secretName }}
+                  key: {{ $ref.secretKey }}
+            {{- end }}
+          {{- end }}
           envFrom:
             - configMapRef:
                 name: {{ .Release.Name }}-config
