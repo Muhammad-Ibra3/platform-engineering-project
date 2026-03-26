@@ -1,5 +1,5 @@
 image:
-  registry: registry-1.docker.io
+  registry: docker.io
   repository: bitnami/keycloak
   tag: 26.3.3-debian-12-r0
 
@@ -25,4 +25,4 @@ postgresql:
     persistence:
       enabled: true
       size: 2Gi
-      storageClass: gp3
+
