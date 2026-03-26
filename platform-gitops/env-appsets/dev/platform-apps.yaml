@@ -30,7 +30,7 @@ spec:
             chartPath: platform-helm/charts/external/vault
             targetNamespace: secrets
             valuesPath: platform-helm/envs/dev/platform/secrets/vault/values.yaml
-            syncWave: "2"
+            syncWave: "0"
 
           - name: keycloak
             chartPath: platform-helm/charts/external/keycloak
