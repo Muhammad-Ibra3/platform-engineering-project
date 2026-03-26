@@ -1,7 +1,26 @@
+global:
+  clusterId: dev-k3s
+  prometheus:
+    enabled: false
+    fqdn: http://prometheus-server.observability.svc.cluster.local
+    insecureSkipVerify: false
+  federatedStorage:
+    config: |-
+      type: S3
+      config:
+        bucket: dev-kubecost-federated-store
+        endpoint: s3.amazonaws.com
+        region: us-east-1
+        insecure: false
+
+prometheus:
+  server:
+    global:
+      external_labels:
+        cluster_id: dev-k3s
+
 kubecostModel:
-  image:
-    repository: gcr.io/kubecost1/cost-model
-    tag: prod-1.110.0
+  fullImageName: gcr.io/kubecost1/cost-model:prod-1.110.0
   resources:
     requests:
       cpu: 25m
@@ -9,11 +28,19 @@ kubecostModel:
     limits:
       cpu: 250m
       memory: 512Mi
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    failureThreshold: 10
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 20
+    periodSeconds: 10
+    failureThreshold: 10
 
 kubecostFrontend:
-  image:
-    repository: gcr.io/kubecost1/frontend
-    tag: prod-1.110.0
+  fullImageName: gcr.io/kubecost1/frontend:prod-1.110.0
   resources:
     requests:
       cpu: 25m
@@ -21,3 +48,13 @@ kubecostFrontend:
     limits:
       cpu: 250m
       memory: 512Mi
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    failureThreshold: 10
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 15
+    periodSeconds: 10
+    failureThreshold: 10
