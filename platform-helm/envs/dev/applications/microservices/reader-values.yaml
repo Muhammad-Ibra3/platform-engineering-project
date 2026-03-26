@@ -6,6 +6,7 @@ env:
   GRPC_PORT: ":5001"
   LOG_LEVEL: "debug"
   KAFKA_BROKERS: "kafka.message-broker.svc.cluster.local:9092"
+  PROMETHEUS_URL: "http://prometheus-server.observability.svc.cluster.local"
   MONGO_DB: "products"
   REDIS_ADDR: "redis.database.svc.cluster.local:6379"
   POSTGRES_HOST: "postgresql.database.svc.cluster.local"
@@ -15,6 +16,29 @@ secretEnv:
   MONGO_URI:
     secretName: mongo-uri-secret
     secretKey: MONGO_URI
+
+livenessProbe:
+  tcpSocket:
+    port: 5001
+  initialDelaySeconds: 20
+  periodSeconds: 10
+  timeoutSeconds: 2
+  failureThreshold: 3
+
+readinessProbe:
+  tcpSocket:
+    port: 5001
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  timeoutSeconds: 2
+  failureThreshold: 3
+
+startupProbe:
+  tcpSocket:
+    port: 5001
+  periodSeconds: 5
+  timeoutSeconds: 2
+  failureThreshold: 24
 
 resources:
   requests:
