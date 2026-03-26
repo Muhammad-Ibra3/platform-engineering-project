@@ -18,6 +18,19 @@ operator:
 
 crdWaitTimeout: 10m
 
+startupProbe:
+  failureThreshold: 300
+  periodSeconds: 2
+
+livenessProbe:
+  failureThreshold: 10
+  periodSeconds: 30
+  requireK8sConnectivity: false
+
+readinessProbe:
+  failureThreshold: 3
+  periodSeconds: 30
+
 hubble:
   enabled: true
   relay:
