@@ -13,25 +13,25 @@ spec:
             chartPath: platform-helm/charts/external/mongodb
             targetNamespace: database
             valuesPath: platform-helm/envs/dev/applications/app-dependencies/databases/mongodb/values.yaml
-            syncWave: "0"
+            syncWave: "1"
 
           - name: postgresql
             chartPath: platform-helm/charts/external/postgresql
             targetNamespace: database
             valuesPath: platform-helm/envs/dev/applications/app-dependencies/databases/postgresdb/values.yaml
-            syncWave: "0"
+            syncWave: "1"
 
           - name: redis
             chartPath: platform-helm/charts/external/redis
             targetNamespace: database
             valuesPath: platform-helm/envs/dev/applications/app-dependencies/databases/redis/values.yaml
-            syncWave: "0"
+            syncWave: "1"
 
           - name: kafka
             chartPath: platform-helm/charts/external/kafka
             targetNamespace: message-broker
             valuesPath: platform-helm/envs/dev/applications/app-dependencies/message-queue/kafka/values.yaml
-            syncWave: "1"
+            syncWave: "2"
 
   template:
     metadata:
