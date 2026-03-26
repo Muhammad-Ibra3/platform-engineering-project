@@ -2,6 +2,9 @@ global:
   image:
     registry: reg.kyverno.io
 
+fullnameOverride: kyverno
+nameOverride: kyverno
+
 admissionController:
   replicas: 1
   image:
