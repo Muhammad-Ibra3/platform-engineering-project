@@ -73,5 +73,9 @@ replica:
 
 metrics:
   enabled: true
+  image:
+    registry: docker.io
+    repository: bitnami/redis-exporter
+    tag: latest
   serviceMonitor:
     enabled: false
