@@ -32,3 +32,8 @@ output "github_actions_oidc_provider_arn" {
   description = "OIDC provider ARN for GitHub Actions federation."
   value       = aws_iam_openid_connect_provider.github_actions.arn
 }
+
+output "kubecost_federated_storage_bucket_name" {
+  description = "S3 bucket name for Kubecost federated storage."
+  value       = aws_s3_bucket.kubecost_federated_storage.bucket
+}

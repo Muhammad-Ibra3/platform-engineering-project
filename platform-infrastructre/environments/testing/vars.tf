@@ -83,3 +83,9 @@ variable "ecr_credential_provider_version" {
   type        = string
   default     = "v1.32.7"
 }
+
+variable "kubecost_federated_storage_bucket_name" {
+  description = "S3 bucket name used by Kubecost federated storage."
+  type        = string
+  default     = "dev-kubecost-federated-store"
+}
