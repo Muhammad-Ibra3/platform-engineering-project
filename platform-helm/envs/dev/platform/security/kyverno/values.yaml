@@ -3,10 +3,10 @@ global:
     registry: reg.kyverno.io
 
 admissionController:
+  replicas: 1
   image:
     repository: kyverno/kyverno
     tag: "v1.17.1"
-  replicas: 1
   resources:
     requests:
       cpu: 50m
@@ -16,13 +16,20 @@ admissionController:
       memory: 256Mi
 
 backgroundController:
+  enabled: true
+  replicas: 1
   image:
     repository: kyverno/background-controller
     tag: "v1.17.1"
-  replicas: 1
 
 cleanupController:
   enabled: true
 
 reportsController:
   enabled: true
+
+crds:
+  install: true
+
+rbac:
+  create: true
