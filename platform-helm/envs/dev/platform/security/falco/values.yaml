@@ -19,3 +19,23 @@ resources:
   limits:
     cpu: 300m
     memory: 256Mi
+
+metrics:
+  enabled: true
+
+healthChecks:
+  startupProbe:
+    initialDelaySeconds: 5
+    timeoutSeconds: 5
+    periodSeconds: 5
+    failureThreshold: 24
+  livenessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 5
+    periodSeconds: 15
+    failureThreshold: 3
+  readinessProbe:
+    initialDelaySeconds: 5
+    timeoutSeconds: 5
+    periodSeconds: 10
+    failureThreshold: 3
