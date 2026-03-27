@@ -52,15 +52,15 @@ variable "k3s_version" {
 }
 
 variable "k3s_node_role_name" {
-  description = "IAM role name attached to the k3s EC2 node."
+  description = "IAM role name attached to the k3s EC2 node for ECR pull and Kubecost S3 access."
   type        = string
-  default     = "k3s-node-ecr-pull-only"
+  default     = "k3s-node-ecr-s3-access-testing"
 }
 
 variable "k3s_node_instance_profile_name" {
-  description = "IAM instance profile name attached to the k3s EC2 node."
+  description = "IAM instance profile name attached to the k3s EC2 node role for ECR pull and Kubecost S3 access."
   type        = string
-  default     = "k3s-node-ecr-pull-only-testing"
+  default     = "k3s-node-ecr-s3-access-testing"
 }
 
 variable "github_actions_role_name" {

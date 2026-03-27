@@ -42,10 +42,35 @@ data "aws_iam_policy_document" "k3s_node_ecr_pull" {
     ]
     resources = ["arn:aws:ecr:${var.aws_region}:*:repository/*"]
   }
+
+  statement {
+    sid    = "KubecostFederatedStorageBucketAccess"
+    effect = "Allow"
+    actions = [
+      "s3:GetBucketLocation",
+      "s3:ListBucket",
+      "s3:ListBucketMultipartUploads",
+    ]
+    resources = [aws_s3_bucket.kubecost_federated_storage.arn]
+  }
+
+  statement {
+    sid    = "KubecostFederatedStorageObjectAccess"
+    effect = "Allow"
+    actions = [
+      "s3:AbortMultipartUpload",
+      "s3:DeleteObject",
+      "s3:GetObject",
+      "s3:GetObjectVersion",
+      "s3:ListMultipartUploadParts",
+      "s3:PutObject",
+    ]
+    resources = ["${aws_s3_bucket.kubecost_federated_storage.arn}/*"]
+  }
 }
 
 resource "aws_iam_role_policy" "k3s_node_ecr_pull" {
-  name   = "${var.k3s_node_role_name}-ecr-pull"
+  name   = "${var.k3s_node_role_name}-ecr-s3-access"
   role   = aws_iam_role.k3s_node.id
   policy = data.aws_iam_policy_document.k3s_node_ecr_pull.json
 }
