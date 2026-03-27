@@ -20,27 +20,6 @@ resources:
     cpu: 300m
     memory: 256Mi
 
-readinessProbe:
-  initialDelaySeconds: 5
-  periodSeconds: 10
-  timeoutSeconds: 2
-  successThreshold: 1
-  failureThreshold: 3
-
-livenessProbe:
-  initialDelaySeconds: 10
-  periodSeconds: 10
-  timeoutSeconds: 2
-  successThreshold: 1
-  failureThreshold: 3
-
-startupProbe:
-  initialDelaySeconds: 10
-  periodSeconds: 5
-  timeoutSeconds: 2
-  successThreshold: 1
-  failureThreshold: 30
-
 metrics:
   prometheus:
     enabled: true
