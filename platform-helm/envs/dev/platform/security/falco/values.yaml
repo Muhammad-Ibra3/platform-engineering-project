@@ -10,6 +10,9 @@ falco:
     - /etc/falco/falco_rules.local.yaml
     - /etc/falco/rules.d
 
+falcosidekick:
+  enabled: true
+
 customRules: {}
 
 resources:
