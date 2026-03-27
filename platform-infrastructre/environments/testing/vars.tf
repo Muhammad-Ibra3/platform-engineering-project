@@ -30,7 +30,7 @@ variable "key_name" {
 variable "root_volume_size" {
   description = "Root EBS volume size in GiB."
   type        = number
-  default     = 20
+  default     = 40
 }
 
 variable "instance_name" {
@@ -87,5 +87,5 @@ variable "ecr_credential_provider_version" {
 variable "kubecost_federated_storage_bucket_name" {
   description = "S3 bucket name used by Kubecost federated storage."
   type        = string
-  default     = "dev-kubecost-federated-store"
+  default     = "dev-kubecost-store-platform-engineering-project"
 }

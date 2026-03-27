@@ -8,7 +8,7 @@ global:
     config: |-
       type: S3
       config:
-        bucket: dev-kubecost-federated-store
+        bucket: dev-kubecost-store-platform-engineering-project
         endpoint: s3.amazonaws.com
         region: us-east-1
         insecure: false
