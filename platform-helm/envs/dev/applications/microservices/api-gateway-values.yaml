@@ -18,6 +18,10 @@ env:
   PROMETHEUS_URL: "http://prometheus-server.observability.svc.cluster.local"
   READER_SERVICE: "reader.dev-microservices.svc.cluster.local:5003"
 
+service:
+  port: 5001
+  targetPort: 5001
+
 livenessProbe:
   httpGet:
     path: /live
