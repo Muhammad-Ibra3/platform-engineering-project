@@ -20,7 +20,7 @@ prometheus:
         cluster_id: dev-k3s
 
 kubecostModel:
-  fullImageName: gcr.io/kubecost1/cost-model:prod-1.110.0
+  image: "gcr.io/kubecost1/cost-model"
   resources:
     requests:
       cpu: 25m
@@ -40,7 +40,7 @@ kubecostModel:
     failureThreshold: 10
 
 kubecostFrontend:
-  fullImageName: gcr.io/kubecost1/frontend:prod-1.110.0
+  image: "gcr.io/kubecost1/frontend"
   resources:
     requests:
       cpu: 25m
