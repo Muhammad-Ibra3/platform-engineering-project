@@ -1,7 +1,7 @@
 image:
+  # NOTE: The image is updated by the GitHub Actions pipelines and is deployed via ArgoCD.
   repository: "016257615702.dkr.ecr.us-east-1.amazonaws.com/api-gateway"
   tag: "e90cc3c8577262e719487acb0ccac39645d4d318"
-
 ingress:
   enabled: true
   className: "traefik"
@@ -17,10 +17,6 @@ env:
   KAFKA_BROKERS: "kafka.message-broker.svc.cluster.local:9092"
   PROMETHEUS_URL: "http://prometheus-server.observability.svc.cluster.local"
   READER_SERVICE: "reader.dev-microservices.svc.cluster.local:5003"
-
-service:
-  port: 5001
-  targetPort: 5001
 
 livenessProbe:
   httpGet:
