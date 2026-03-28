@@ -63,6 +63,8 @@ vendor/
 # Local helper scripts
 platform-infrastructre/environments/testing/deploy-and-ssh.sh
 platform-infrastructre/environments/testing/recreate-cluster-and-ssh.sh
+platform-infrastructre/environments/testing/destroy-cluster.sh
 
 # Local Terraform overrides
 platform-infrastructre/environments/testing/ecr-testing.local.tf
+platform-infrastructre/environments/testing/terraform.env
