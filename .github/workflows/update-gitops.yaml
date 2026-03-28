@@ -91,6 +91,24 @@ jobs:
             esac
           }
 
+          # Ensure API gateway preview override exists and apply preview ingress host/tls on every run.
+          api_src="${DEV_DIR}/api-gateway-values.yaml"
+          api_dst="${PREVIEW_DIR}/api-gateway-values.yaml"
+          if [ ! -f "$api_dst" ]; then
+            cp "$api_src" "$api_dst"
+          fi
+
+          export PREVIEW_HOST="preview-${PR_NUM}.preview.myplatformproject.com"
+          export PREVIEW_TLS_SECRET="preview-${PR_NUM}-tls"
+          yq -i '
+            .ingress.enabled = true |
+            .ingress.className = "traefik" |
+            .ingress.annotations."cert-manager.io/cluster-issuer" = "letsencrypt-route53-dns01" |
+            .ingress.hosts = [{"host": strenv(PREVIEW_HOST), "paths": [{"path": "/", "pathType": "Prefix"}]}] |
+            .ingress.tls = [{"secretName": strenv(PREVIEW_TLS_SECRET), "hosts": [strenv(PREVIEW_HOST)]}]
+          ' "$api_dst"
+
+          # Only changed services keep/update preview image tag overrides.
           while read -r raw_service; do
             [ -z "$raw_service" ] && continue
             service="$(map_to_helm "$raw_service")"
@@ -105,26 +123,10 @@ jobs:
 
             src="${DEV_DIR}/${service}-values.yaml"
             dst="${PREVIEW_DIR}/${service}-values.yaml"
-
-            if [ -f "$src" ]; then
+            if [ ! -f "$dst" ]; then
               cp "$src" "$dst"
-            else
-              printf 'image:\n  tag: "%s"\n' "$TAG" > "$dst"
             fi
-
             yq -i '.image.tag = strenv(TAG)' "$dst"
-
-            if [ "$service" = "api-gateway" ]; then
-              export PREVIEW_HOST="preview-${PR_NUM}.preview.myplatformproject.com"
-              export PREVIEW_TLS_SECRET="preview-${PR_NUM}-tls"
-              yq -i '
-                .ingress.enabled = true |
-                .ingress.className = "traefik" |
-                .ingress.annotations."cert-manager.io/cluster-issuer" = "letsencrypt-route53-dns01" |
-                .ingress.hosts = [{"host": strenv(PREVIEW_HOST), "paths": [{"path": "/", "pathType": "Prefix"}]}] |
-                .ingress.tls = [{"secretName": strenv(PREVIEW_TLS_SECRET), "hosts": [strenv(PREVIEW_HOST)]}]
-              ' "$dst"
-            fi
           done < <(echo "$services_payload" | jq -r '.[]')
 
       - name: Commit and push

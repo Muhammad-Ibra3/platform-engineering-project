@@ -48,9 +48,10 @@ spec:
           path: platform-helm/charts/microservices
           helm:
             releaseName: '{{.service}}-{{.path.basename}}'
-            ignoreMissingValueFiles: false
+            ignoreMissingValueFiles: true
             valueFiles:
               - '{{.service}}/values.yaml'
+              - '$myvalues/platform-helm/envs/dev/applications/microservices/{{.service}}-values.yaml'
               - '$myvalues/platform-helm/envs/preview/microservices/{{.path.basename}}/{{.service}}-values.yaml'
 
         # Values repo reference
