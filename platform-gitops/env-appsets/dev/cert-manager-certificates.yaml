@@ -1,0 +1,80 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: api-dev-wildcard-cert
+  namespace: dev-microservices
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  secretName: api-dev-myplatformproject-com-tls
+  commonName: "*.dev.myplatformproject.com"
+  dnsNames:
+    - "*.dev.myplatformproject.com"
+  issuerRef:
+    name: letsencrypt-route53-dns01
+    kind: ClusterIssuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: keycloak-dev-wildcard-cert
+  namespace: identity
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  secretName: keycloak.dev.myplatformproject.com-tls
+  commonName: "*.dev.myplatformproject.com"
+  dnsNames:
+    - "*.dev.myplatformproject.com"
+  issuerRef:
+    name: letsencrypt-route53-dns01
+    kind: ClusterIssuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: grafana-dev-wildcard-cert
+  namespace: observability
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  secretName: grafana-dev-myplatformproject-com-tls
+  commonName: "*.dev.myplatformproject.com"
+  dnsNames:
+    - "*.dev.myplatformproject.com"
+  issuerRef:
+    name: letsencrypt-route53-dns01
+    kind: ClusterIssuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: kubecost-dev-wildcard-cert
+  namespace: finops
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  secretName: kubecost-dev-myplatformproject-com-tls
+  commonName: "*.dev.myplatformproject.com"
+  dnsNames:
+    - "*.dev.myplatformproject.com"
+  issuerRef:
+    name: letsencrypt-route53-dns01
+    kind: ClusterIssuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: preview-wildcard-cert
+  namespace: cert-manager
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  secretName: preview-myplatformproject-com-wildcard-tls
+  commonName: "*.preview.myplatformproject.com"
+  dnsNames:
+    - "preview.myplatformproject.com"
+    - "*.preview.myplatformproject.com"
+  issuerRef:
+    name: letsencrypt-route53-dns01
+    kind: ClusterIssuer

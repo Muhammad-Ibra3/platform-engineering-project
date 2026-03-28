@@ -32,7 +32,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          rm -rf "platform-helm/envs/preview/microservices/${{ inputs.pr_number }}"
+          rm -rf "platform-helm/envs/preview/microservices/preview-${{ inputs.pr_number }}"
 
       - name: Commit and push
         shell: bash
@@ -42,7 +42,7 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
 
-          git add -A "platform-helm/envs/preview/microservices/${{ inputs.pr_number }}"
+          git add -A "platform-helm/envs/preview/microservices/preview-${{ inputs.pr_number }}"
 
           if git diff --staged --quiet; then
             echo "No preview environment changes detected."

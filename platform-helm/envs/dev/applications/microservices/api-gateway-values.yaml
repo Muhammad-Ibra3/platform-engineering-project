@@ -5,11 +5,17 @@ image:
 ingress:
   enabled: true
   className: "traefik"
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-route53-dns01
   hosts:
-    - host: api.dev.example.local
+    - host: api.dev.myplatformproject.com
       paths:
         - path: /
           pathType: Prefix
+  tls:
+    - secretName: api-dev-myplatformproject-com-tls
+      hosts:
+        - api.dev.myplatformproject.com
 
 env:
   HTTP_PORT: ":5001"

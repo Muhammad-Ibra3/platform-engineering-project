@@ -20,12 +20,6 @@ spec:
             valuesPath: platform-helm/envs/dev/platform/ingress/cert-manager/values.yaml
             syncWave: "1"
 
-          - name: traefik
-            chartPath: platform-helm/charts/external/traefik
-            targetNamespace: ingress
-            valuesPath: platform-helm/envs/dev/platform/ingress/traefik/values.yaml
-            syncWave: "2"
-
           - name: external-dns
             chartPath: platform-helm/charts/external/external-dns
             targetNamespace: external-dns

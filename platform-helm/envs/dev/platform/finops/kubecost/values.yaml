@@ -58,3 +58,15 @@ kubecostFrontend:
     initialDelaySeconds: 15
     periodSeconds: 10
     failureThreshold: 10
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-route53-dns01
+  hosts:
+    - kubecost.dev.myplatformproject.com
+  tls:
+    - secretName: kubecost-dev-myplatformproject-com-tls
+      hosts:
+        - kubecost.dev.myplatformproject.com

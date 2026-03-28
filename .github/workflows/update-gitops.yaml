@@ -115,10 +115,14 @@ jobs:
             yq -i '.image.tag = strenv(TAG)' "$dst"
 
             if [ "$service" = "api-gateway" ]; then
-              export PREVIEW_HOST="api.preview-${PR_NUM}.dev.example.local"
+              export PREVIEW_HOST="preview-${PR_NUM}.preview.myplatformproject.com"
+              export PREVIEW_TLS_SECRET="preview-${PR_NUM}-tls"
               yq -i '
                 .ingress.enabled = true |
-                .ingress.hosts = [{"host": strenv(PREVIEW_HOST), "paths": [{"path": "/", "pathType": "Prefix"}]}]
+                .ingress.className = "traefik" |
+                .ingress.annotations."cert-manager.io/cluster-issuer" = "letsencrypt-route53-dns01" |
+                .ingress.hosts = [{"host": strenv(PREVIEW_HOST), "paths": [{"path": "/", "pathType": "Prefix"}]}] |
+                .ingress.tls = [{"secretName": strenv(PREVIEW_TLS_SECRET), "hosts": [strenv(PREVIEW_HOST)]}]
               ' "$dst"
             fi
           done < <(echo "$services_payload" | jq -r '.[]')

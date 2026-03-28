@@ -39,7 +39,12 @@ startupProbe:
   successThreshold: 1
 
 ingress:
-  enabled: false
+  enabled: true
+  hostname: keycloak.dev.myplatformproject.com
+  ingressClassName: traefik
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-route53-dns01
+  tls: true
 
 metrics:
   enabled: false

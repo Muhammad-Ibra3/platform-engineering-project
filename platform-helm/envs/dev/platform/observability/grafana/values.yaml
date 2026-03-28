@@ -42,6 +42,18 @@ livenessProbe:
   timeoutSeconds: 5
   failureThreshold: 5
 
+ingress:
+  enabled: true
+  ingressClassName: traefik
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-route53-dns01
+  hosts:
+    - grafana.dev.myplatformproject.com
+  tls:
+    - secretName: grafana-dev-myplatformproject-com-tls
+      hosts:
+        - grafana.dev.myplatformproject.com
+
 datasources:
   datasources.yaml:
     apiVersion: 1

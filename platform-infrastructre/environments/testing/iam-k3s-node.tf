@@ -88,6 +88,15 @@ data "aws_iam_policy_document" "k3s_node_ecr_pull" {
     ]
     resources = ["*"]
   }
+
+  statement {
+    sid    = "Route53GetDnsChangeStatus"
+    effect = "Allow"
+    actions = [
+      "route53:GetChange",
+    ]
+    resources = ["arn:aws:route53:::change/*"]
+  }
 }
 
 resource "aws_iam_role_policy" "k3s_node_ecr_pull" {

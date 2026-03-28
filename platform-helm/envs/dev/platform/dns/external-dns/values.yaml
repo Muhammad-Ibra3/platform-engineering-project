@@ -1,7 +1,7 @@
 provider:
   name: aws
 
-policy: upsert-only
+policy: sync
 registry: txt
 txtOwnerId: k3s-dev-myplatformproject-com
 
@@ -9,7 +9,6 @@ domainFilters:
   - myplatformproject.com
 
 sources:
-  - service
   - ingress
 
 aws:
