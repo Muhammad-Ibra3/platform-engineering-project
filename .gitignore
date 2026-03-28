@@ -67,4 +67,3 @@ platform-infrastructre/environments/testing/destroy-cluster.sh
 
 # Local Terraform overrides
 platform-infrastructre/environments/testing/ecr-testing.local.tf
-platform-infrastructre/environments/testing/terraform.env
