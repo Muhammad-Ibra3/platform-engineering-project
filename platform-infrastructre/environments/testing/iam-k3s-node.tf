@@ -67,10 +67,31 @@ data "aws_iam_policy_document" "k3s_node_ecr_pull" {
     ]
     resources = ["${aws_s3_bucket.kubecost_federated_storage.arn}/*"]
   }
+
+  statement {
+    sid    = "Route53ChangeRecordsForPlatformZone"
+    effect = "Allow"
+    actions = [
+      "route53:ChangeResourceRecordSets",
+      "route53:GetHostedZone",
+      "route53:ListResourceRecordSets",
+    ]
+    resources = [aws_route53_zone.platform_public.arn]
+  }
+
+  statement {
+    sid    = "Route53ListZonesForExternalDns"
+    effect = "Allow"
+    actions = [
+      "route53:ListHostedZones",
+      "route53:ListHostedZonesByName",
+    ]
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_role_policy" "k3s_node_ecr_pull" {
-  name   = "${var.k3s_node_role_name}-ecr-s3-access"
+  name   = "${var.k3s_node_role_name}-ecr-s3-route53-access"
   role   = aws_iam_role.k3s_node.id
   policy = data.aws_iam_policy_document.k3s_node_ecr_pull.json
 }

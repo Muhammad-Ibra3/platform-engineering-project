@@ -37,3 +37,13 @@ output "kubecost_federated_storage_bucket_name" {
   description = "S3 bucket name for Kubecost federated storage."
   value       = aws_s3_bucket.kubecost_federated_storage.bucket
 }
+
+output "platform_hosted_zone_id" {
+  description = "Route53 hosted zone ID for the platform domain."
+  value       = aws_route53_zone.platform_public.zone_id
+}
+
+output "platform_hosted_zone_name_servers" {
+  description = "Authoritative Route53 name servers for the platform domain."
+  value       = aws_route53_zone.platform_public.name_servers
+}

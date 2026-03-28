@@ -52,13 +52,13 @@ variable "k3s_version" {
 }
 
 variable "k3s_node_role_name" {
-  description = "IAM role name attached to the k3s EC2 node for ECR pull and Kubecost S3 access."
+  description = "IAM role name attached to the k3s EC2 node for ECR pull, Kubecost S3, and Route53 ExternalDNS access."
   type        = string
   default     = "k3s-node-ecr-s3-access-testing"
 }
 
 variable "k3s_node_instance_profile_name" {
-  description = "IAM instance profile name attached to the k3s EC2 node role for ECR pull and Kubecost S3 access."
+  description = "IAM instance profile name attached to the k3s EC2 node role for ECR pull, Kubecost S3, and Route53 ExternalDNS access."
   type        = string
   default     = "k3s-node-ecr-s3-access-testing"
 }
@@ -88,4 +88,10 @@ variable "kubecost_federated_storage_bucket_name" {
   description = "S3 bucket name used by Kubecost federated storage."
   type        = string
   default     = "dev-kubecost-store-platform-engineering-project"
+}
+
+variable "platform_domain_name" {
+  description = "Public DNS domain to create in Route53."
+  type        = string
+  default     = "myplatformproject.com"
 }
