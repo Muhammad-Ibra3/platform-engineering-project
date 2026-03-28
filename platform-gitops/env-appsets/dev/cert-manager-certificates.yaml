@@ -65,6 +65,54 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
+  name: argocd-dev-wildcard-cert
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  secretName: argo-dev-myplatformproject-com-tls
+  commonName: "*.dev.myplatformproject.com"
+  dnsNames:
+    - "*.dev.myplatformproject.com"
+  issuerRef:
+    name: letsencrypt-route53-dns01
+    kind: ClusterIssuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: hubble-dev-wildcard-cert
+  namespace: kube-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  secretName: hubble-dev-myplatformproject-com-tls
+  commonName: "*.dev.myplatformproject.com"
+  dnsNames:
+    - "*.dev.myplatformproject.com"
+  issuerRef:
+    name: letsencrypt-route53-dns01
+    kind: ClusterIssuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: falco-sidekick-dev-wildcard-cert
+  namespace: security
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  secretName: falco-sidekick-dev-myplatformproject-com-tls
+  commonName: "*.dev.myplatformproject.com"
+  dnsNames:
+    - "*.dev.myplatformproject.com"
+  issuerRef:
+    name: letsencrypt-route53-dns01
+    kind: ClusterIssuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
   name: preview-wildcard-cert
   namespace: cert-manager
   annotations:

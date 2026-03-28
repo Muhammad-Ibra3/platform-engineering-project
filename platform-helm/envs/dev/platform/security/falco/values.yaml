@@ -12,6 +12,21 @@ falco:
 
 falcosidekick:
   enabled: true
+  webui:
+    enabled: true
+    ingress:
+      enabled: true
+      ingressClassName: traefik
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-route53-dns01
+      hosts:
+        - host: falco-sidekick.dev.myplatformproject.com
+          paths:
+            - path: /
+      tls:
+        - secretName: falco-sidekick-dev-myplatformproject-com-tls
+          hosts:
+            - falco-sidekick.dev.myplatformproject.com
 
 customRules: {}
 

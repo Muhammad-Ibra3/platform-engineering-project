@@ -37,3 +37,14 @@ hubble:
     enabled: true
   ui:
     enabled: true
+    ingress:
+      enabled: true
+      className: traefik
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-route53-dns01
+      hosts:
+        - hubble.dev.myplatformproject.com
+      tls:
+        - secretName: hubble-dev-myplatformproject-com-tls
+          hosts:
+            - hubble.dev.myplatformproject.com
