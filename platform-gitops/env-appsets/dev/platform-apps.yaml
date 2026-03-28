@@ -26,6 +26,12 @@ spec:
             valuesPath: platform-helm/envs/dev/platform/ingress/traefik/values.yaml
             syncWave: "2"
 
+          - name: external-dns
+            chartPath: platform-helm/charts/external/external-dns
+            targetNamespace: external-dns
+            valuesPath: platform-helm/envs/dev/platform/dns/external-dns/values.yaml
+            syncWave: "3"
+
           - name: vault
             chartPath: platform-helm/charts/external/vault
             targetNamespace: secrets
