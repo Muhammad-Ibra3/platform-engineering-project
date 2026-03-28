@@ -1,0 +1,22 @@
+provider:
+  name: aws
+
+policy: upsert-only
+registry: txt
+txtOwnerId: k3s-dev-myplatformproject-com
+
+domainFilters:
+  - myplatformproject.com
+
+sources:
+  - service
+  - ingress
+
+aws:
+  zoneType: public
+
+env:
+  - name: AWS_REGION
+    value: us-east-1
+  - name: AWS_DEFAULT_REGION
+    value: us-east-1

@@ -1,0 +1,34 @@
+kubectl create secret generic postgresql-auth \
+  -n database \
+  --from-literal=postgres-password=postgres \
+  --from-literal=password=postgres
+
+kubectl create secret generic writer-db-secret \
+  -n dev-microservices \
+  --from-literal=POSTGRES_PASSWORD=postgres
+
+kubectl create secret generic mongodb-auth \
+  -n database \
+  --from-literal=mongodb-root-password=admin
+
+kubectl create secret generic mongo-uri-secret \
+  -n dev-microservices \
+  --from-literal=MONGO_URI="mongodb://admin:admin@mongodb.database.svc.cluster.local:27017/products?authSource=admin"
+
+kubectl create secret generic grafana-admin \
+  -n observability \
+  --from-literal=admin-user=admin \
+  --from-literal=admin-password=admin
+
+kubectl create secret generic redis-auth \
+  --from-literal=redis-password='StrongPassword123!' \
+  -n database
+
+kubectl create secret generic keycloak-auth \
+  -n identity \
+  --from-literal=admin-password='StrongAdminPassword123!'
+
+kubectl create secret generic keycloak-postgresql-auth \
+  -n identity \
+  --from-literal=postgres-password='StrongPostgresPassword123!' \
+  --from-literal=password='StrongAppUserPassword123!'
