@@ -59,13 +59,6 @@ kubelet-arg:
   - image-credential-provider-config=/var/lib/rancher/credentialprovider/config.yaml
 EOM
 
-# Ensure ingress status advertises the public address so ExternalDNS publishes public A records.
-if [ -n "${PUBLIC_IP}" ]; then
-  cat >>/etc/rancher/k3s/config.yaml <<EOM
-node-external-ip: "${PUBLIC_IP}"
-EOM
-fi
-
 # Install k3s
 curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="${K3S_VERSION}" sh -
 
