@@ -6,8 +6,13 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "4"
     cert-manager.io/cluster-issuer: letsencrypt-route53-dns01
+    external-dns.alpha.kubernetes.io/target: "18.234.67.136"
 spec:
   ingressClassName: traefik
+  tls:
+    - hosts:
+        - argo.dev.myplatformproject.com
+      secretName: argo-dev-myplatformproject-com-tls
   rules:
     - host: argo.dev.myplatformproject.com
       http:
@@ -19,7 +24,3 @@ spec:
                 name: argocd-server
                 port:
                   number: 80
-  tls:
-    - secretName: argo-dev-myplatformproject-com-tls
-      hosts:
-        - argo.dev.myplatformproject.com
