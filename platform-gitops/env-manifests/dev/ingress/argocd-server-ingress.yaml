@@ -6,7 +6,6 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "4"
     cert-manager.io/cluster-issuer: letsencrypt-route53-dns01
-    traefik.ingress.kubernetes.io/service.serversscheme: https
 spec:
   ingressClassName: traefik
   rules:
@@ -19,7 +18,7 @@ spec:
               service:
                 name: argocd-server
                 port:
-                  number: 443
+                  number: 80
   tls:
     - secretName: argo-dev-myplatformproject-com-tls
       hosts:
