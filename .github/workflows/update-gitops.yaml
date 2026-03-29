@@ -17,7 +17,7 @@ on:
       pr_number:
         required: true
         type: string
-        description: PR number used for platform-helm/envs/preview/microservices/preview-<pr>/
+        description: PR number used for platform-helm/envs/preview/preview-<pr>/
       gitops_repo:
         required: true
         type: string
@@ -37,7 +37,7 @@ jobs:
           set -euo pipefail
 
           PR_NUM="${{ inputs.pr_number }}"
-          PREVIEW_DIR="platform-helm/envs/preview/microservices/${PR_NUM}"
+          PREVIEW_DIR="platform-helm/envs/preview/${PR_NUM}"
 
           echo "PR_NUM=$PR_NUM" >> "$GITHUB_ENV"
           echo "PREVIEW_DIR=$PREVIEW_DIR" >> "$GITHUB_ENV"
