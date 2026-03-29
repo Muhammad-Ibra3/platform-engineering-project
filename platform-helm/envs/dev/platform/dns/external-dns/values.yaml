@@ -14,6 +14,9 @@ sources:
 aws:
   zoneType: public
 
+extraArgs:
+  default-targets: "18.234.67.136"
+
 env:
   - name: AWS_REGION
     value: us-east-1
