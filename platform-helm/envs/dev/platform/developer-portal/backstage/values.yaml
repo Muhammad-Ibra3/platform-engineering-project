@@ -66,10 +66,10 @@ backstage:
           password: ${POSTGRES_PASSWORD}
           database: ${POSTGRES_DB}
     auth:
-      environment: development
+      environment: production
       providers:
         oidc:
-          development:
+          production:
             metadataUrl: https://keycloak.dev.myplatformproject.com/realms/backstage/.well-known/openid-configuration
             clientId: backstage
             clientSecret: ${AUTH_KEYCLOAK_CLIENT_SECRET}
@@ -82,6 +82,16 @@ backstage:
       locations:
         - type: url
           target: https://github.com/Muhammad-Ibra3/platform-engineering-project/blob/main/platform-backstage/catalog/entities.yaml
+          rules:
+            - allow:
+                - Group
+                - User
+                - Location
+                - Component
+                - System
+                - API
+                - Resource
+                - Domain
     techdocs:
       builder: local
       generator:
