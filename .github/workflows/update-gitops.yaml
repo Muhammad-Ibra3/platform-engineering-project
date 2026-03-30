@@ -37,7 +37,7 @@ jobs:
           set -euo pipefail
 
           PR_NUM="${{ inputs.pr_number }}"
-          PREVIEW_DIR="platform-helm/envs/preview/${PR_NUM}"
+          PREVIEW_DIR="platform-helm/envs/preview/preview-${PR_NUM}"
 
           echo "PR_NUM=$PR_NUM" >> "$GITHUB_ENV"
           echo "PREVIEW_DIR=$PREVIEW_DIR" >> "$GITHUB_ENV"
