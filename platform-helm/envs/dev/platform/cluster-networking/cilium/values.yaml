@@ -33,8 +33,22 @@ readinessProbe:
 
 hubble:
   enabled: true
+  metrics:
+    enableOpenMetrics: true
+    enabled:
+      - "dns:query;ignoreAAAA"
+      - "drop"
+      - "tcp"
+      - "flow"
+      - "httpV2:sourceContext=workload-name|pod-name|reserved-identity;destinationContext=workload-name|pod-name|reserved-identity;labelsContext=source_namespace,destination_namespace,traffic_direction"
+    serviceMonitor:
+      enabled: false
   relay:
     enabled: true
+    prometheus:
+      enabled: true
+      serviceMonitor:
+        enabled: false
   ui:
     enabled: true
     ingress:
