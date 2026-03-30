@@ -23,7 +23,8 @@ env:
   LOG_LEVEL: "debug"
   KAFKA_BROKERS: "kafka.message-broker.svc.cluster.local:9092"
   PROMETHEUS_URL: "http://prometheus-server.observability.svc.cluster.local"
-  READER_SERVICE: "reader.dev-microservices.svc.cluster.local:5003"
+  JAEGER_HOST: "jaeger.observability.svc.cluster.local"
+  READER_SERVICE: "reader.dev-microservices.svc.cluster.local:5001"
 
 service:
   port: 5001

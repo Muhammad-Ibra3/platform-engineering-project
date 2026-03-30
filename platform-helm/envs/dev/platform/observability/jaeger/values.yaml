@@ -1,0 +1,12 @@
+jaeger:
+  enabled: true
+  replicas: 1
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: false
+
+storage:
+  type: elasticsearch
+  elasticsearch:
+    url: http://elasticsearch-master:9200

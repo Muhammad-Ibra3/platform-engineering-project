@@ -72,6 +72,12 @@ spec:
             valuesPath: platform-helm/envs/dev/platform/observability/grafana/values.yaml
             syncWave: "4"
 
+          - name: jaeger
+            chartPath: platform-helm/charts/external/jaeger
+            targetNamespace: observability
+            valuesPath: platform-helm/envs/dev/platform/observability/jaeger/values.yaml
+            syncWave: "4"
+
           - name: kubecost
             chartPath: platform-helm/charts/external/kubecost
             targetNamespace: finops
