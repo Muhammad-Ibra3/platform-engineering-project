@@ -4,34 +4,64 @@
 nameOverride: "api-gateway"
 fullnameOverride: "api-gateway"
 
-replicaCount: 1
 image:
   repository: "016257615702.dkr.ecr.us-east-1.amazonaws.com/api-gateway"
   tag: "latest"
   pullPolicy: Always
 
-service:
-  type: NodePort
-  ports:
-    - name: http
-      port: 8080
-      targetPort: 8080
-
 ingress:
-  # Ingress is disabled by default. Enable and configure in environment-specific overrides as needed.
-  enabled: false 
-
-probes:
-  liveness:
-    path: /health
-    port: 8080
+  enabled: true
+  className: "traefik"
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-route53-dns01
+  hosts:
+    - host: api.myplatformproject.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: api-myplatformproject-com-tls
+      hosts:
+        - api.myplatformproject.com
 
 env:
-  PORT: "8080"
+  HTTP_PORT: ":5001"
   LOG_LEVEL: "debug"
   KAFKA_BROKERS: "kafka.message-broker.svc.cluster.local:9092"
-  WRITER_GRPC_PORT: "writer:5000"
-  READER_GRPC_PORT: "reader:5001"
+  PROMETHEUS_URL: "http://prometheus-server.observability.svc.cluster.local"
+  JAEGER_HOST: "jaeger.observability.svc.cluster.local"
+  READER_SERVICE: "reader:5001"
+
+service:
+  type: ClusterIP
+  port: 5001
+  targetPort: 5001
+
+livenessProbe:
+  httpGet:
+    path: /live
+    port: 3001
+  initialDelaySeconds: 20
+  periodSeconds: 10
+  timeoutSeconds: 2
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /ready
+    port: 3001
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  timeoutSeconds: 2
+  failureThreshold: 3
+
+startupProbe:
+  httpGet:
+    path: /live
+    port: 3001
+  periodSeconds: 5
+  timeoutSeconds: 2
+  failureThreshold: 24
 
 resources:
   requests:

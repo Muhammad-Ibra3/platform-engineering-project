@@ -23,15 +23,47 @@ probes:
     port: 5000
 
 env:
-  GRPC_PORT: "5000"
+  GRPC_PORT: ":5000"
   LOG_LEVEL: "debug"
   KAFKA_BROKERS: "kafka.message-broker.svc.cluster.local:9092"
+  PROMETHEUS_URL: "http://prometheus-server.observability.svc.cluster.local"
+  JAEGER_HOST: "jaeger.observability.svc.cluster.local"
   POSTGRES_HOST: "postgresql.database.svc.cluster.local"
   POSTGRES_PORT: "5432"
   POSTGRES_DB: "products"
   POSTGRES_USER: "postgres"
   REDIS_ADDR: "redis.database.svc.cluster.local:6379"
-  MONGO_URI: "mongodb://mongodb.database.svc.cluster.local:27017"
+
+secretEnv:
+  POSTGRES_PASSWORD:
+    secretName: writer-db-secret
+    secretKey: POSTGRES_PASSWORD
+  MONGO_URI:
+    secretName: mongo-uri-secret
+    secretKey: MONGO_URI
+
+livenessProbe:
+  tcpSocket:
+    port: 5000
+  initialDelaySeconds: 20
+  periodSeconds: 10
+  timeoutSeconds: 2
+  failureThreshold: 3
+
+readinessProbe:
+  tcpSocket:
+    port: 5000
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  timeoutSeconds: 2
+  failureThreshold: 3
+
+startupProbe:
+  tcpSocket:
+    port: 5000
+  periodSeconds: 5
+  timeoutSeconds: 2
+  failureThreshold: 24
 
 resources:
   requests:
