@@ -4,9 +4,15 @@ jaeger:
   service:
     type: ClusterIP
   ingress:
-    enabled: false
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-route53-dns01
+      external-dns.alpha.kubernetes.io/target: "18.234.67.136"
+    hosts:
+      - jaeger.dev.myplatformproject.com
+    tls:
+      - secretName: jaeger-dev-myplatformproject-com-tls
+        hosts:
+          - jaeger.dev.myplatformproject.com
 
-storage:
-  type: elasticsearch
-  elasticsearch:
-    url: http://elasticsearch-master:9200
