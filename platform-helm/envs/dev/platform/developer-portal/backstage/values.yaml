@@ -82,6 +82,12 @@ backstage:
       locations:
         - type: url
           target: https://github.com/Muhammad-Ibra3/platform-engineering-project/blob/main/platform-backstage/catalog/entities.yaml
+    techdocs:
+      builder: local
+      generator:
+        runIn: local
+      publisher:
+        type: local
 
 postgresql:
   enabled: false
