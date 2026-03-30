@@ -1,0 +1,93 @@
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-route53-dns01
+    external-dns.alpha.kubernetes.io/target: "18.234.67.136"
+  host: backstage.dev.myplatformproject.com
+  path: /
+  tls:
+    enabled: true
+    secretName: backstage-dev-myplatformproject-com-tls
+
+backstage:
+  image:
+    registry: ghcr.io
+    repository: backstage/backstage
+    tag: latest
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+  extraEnvVars:
+    - name: POSTGRES_HOST
+      value: backstage-postgres-postgresql.developer-portal.svc.cluster.local
+    - name: POSTGRES_PORT
+      value: "5432"
+    - name: POSTGRES_USER
+      value: backstage
+    - name: POSTGRES_DB
+      value: backstage_plugin_catalog
+    - name: OTEL_EXPORTER_OTLP_ENDPOINT
+      value: http://jaeger.observability.svc.cluster.local:4317
+    - name: OTEL_EXPORTER_OTLP_PROTOCOL
+      value: grpc
+    - name: OTEL_SERVICE_NAME
+      value: backstage-backend
+    - name: OTEL_TRACES_SAMPLER
+      value: parentbased_traceidratio
+    - name: OTEL_TRACES_SAMPLER_ARG
+      value: "0.2"
+  extraEnvVarsSecrets:
+    - backstage-secrets
+  appConfig:
+    app:
+      title: MyPlatform Developer Portal
+      baseUrl: https://backstage.dev.myplatformproject.com
+    backend:
+      baseUrl: https://backstage.dev.myplatformproject.com
+      cors:
+        origin: https://backstage.dev.myplatformproject.com
+        methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
+        credentials: true
+      auth:
+        keys:
+          - secret: ${BACKEND_SECRET}
+      database:
+        client: pg
+        connection:
+          host: ${POSTGRES_HOST}
+          port: ${POSTGRES_PORT}
+          user: ${POSTGRES_USER}
+          password: ${POSTGRES_PASSWORD}
+          database: ${POSTGRES_DB}
+    auth:
+      environment: development
+      providers:
+        oidc:
+          development:
+            metadataUrl: https://keycloak.dev.myplatformproject.com/realms/backstage/.well-known/openid-configuration
+            clientId: backstage
+            clientSecret: ${AUTH_KEYCLOAK_CLIENT_SECRET}
+            prompt: auto
+            signIn:
+              resolvers:
+                - resolver: preferredUsernameMatchingUserEntityName
+                - resolver: emailMatchingUserEntityProfileEmail
+    catalog:
+      locations:
+        - type: url
+          target: https://github.com/Muhammad-Ibra3/platform-engineering-project/blob/main/platform-backstage/catalog/entities.yaml
+
+postgresql:
+  enabled: false
+
+service:
+  type: ClusterIP
+
+metrics:
+  serviceMonitor:
+    enabled: false

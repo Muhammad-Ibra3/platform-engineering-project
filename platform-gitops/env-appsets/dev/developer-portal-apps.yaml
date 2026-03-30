@@ -1,0 +1,61 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: dev-developer-portal-apps
+  namespace: argocd
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          - name: backstage-postgres
+            chartPath: platform-helm/charts/external/postgresql
+            targetNamespace: developer-portal
+            valuesPath: platform-helm/envs/dev/platform/developer-portal/backstage-postgres/values.yaml
+            syncWave: "4"
+
+          - name: backstage
+            chartPath: platform-helm/charts/external/backstage
+            targetNamespace: developer-portal
+            valuesPath: platform-helm/envs/dev/platform/developer-portal/backstage/values.yaml
+            syncWave: "5"
+
+  template:
+    metadata:
+      name: 'dev-{{.name}}'
+      namespace: argocd
+      labels:
+        environment: dev
+        tier: developer-portal
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{.syncWave}}'
+
+    spec:
+      project: default
+
+      source:
+        repoURL: 'https://github.com/Muhammad-Ibra3/platform-engineering-project.git'
+        targetRevision: main
+        path: '{{.chartPath}}'
+        helm:
+          releaseName: '{{.name}}'
+          valueFiles:
+            - '../../../../{{.valuesPath}}'
+
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{.targetNamespace}}'
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        retry:
+          limit: 3
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 2m
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true

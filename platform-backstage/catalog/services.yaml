@@ -1,0 +1,52 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: api-gateway
+  description: API entrypoint for the microservices platform
+  tags:
+    - go
+    - grpc
+    - platform
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/platform-team
+  system: platform-core
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: reader-service
+  description: Read path microservice for product data
+  tags:
+    - go
+    - grpc
+    - platform
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/platform-team
+  system: platform-core
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: writer-service
+  description: Write path microservice for product data
+  tags:
+    - go
+    - grpc
+    - platform
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/platform-team
+  system: platform-core
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: platform-core
+  description: Core runtime system for myplatformproject services
+spec:
+  owner: group:default/platform-team
