@@ -54,9 +54,16 @@ backstage:
         origin: https://backstage.dev.myplatformproject.com
         methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
         credentials: true
+      reading:
+        allow:
+          - host: github.com
+          - host: raw.githubusercontent.com
       auth:
-        keys:
-          - secret: ${BACKEND_SECRET}
+        externalAccess:
+          - type: static
+            options:
+              token: ${BACKEND_SECRET}
+              subject: backstage
       database:
         client: pg
         connection:
@@ -92,6 +99,9 @@ backstage:
                 - API
                 - Resource
                 - Domain
+    integrations:
+      github:
+        - host: github.com
     techdocs:
       builder: local
       generator:
