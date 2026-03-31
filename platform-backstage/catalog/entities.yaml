@@ -27,6 +27,6 @@ metadata:
   name: platform-services
   description: Seed catalog entries for initial platform services
 spec:
-  type: file
+  type: url
   targets:
-    - ./services.yaml
+    - https://raw.githubusercontent.com/Muhammad-Ibra3/platform-engineering-project/main/platform-backstage/catalog/services.yaml
