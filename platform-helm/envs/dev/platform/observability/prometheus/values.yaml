@@ -13,16 +13,12 @@ server:
       memory: 256Mi
     limits:
       cpu: 500m
-      memory: 1Gi
+      memory: 3Gi
   startupProbe:
     enabled: true
     periodSeconds: 5
     timeoutSeconds: 10
     failureThreshold: 30
-
-configmapReload:
-  prometheus:
-    enabled: false
 
 alertmanager:
   image:
