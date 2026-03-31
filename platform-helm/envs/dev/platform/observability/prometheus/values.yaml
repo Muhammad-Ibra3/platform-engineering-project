@@ -20,6 +20,10 @@ server:
     timeoutSeconds: 10
     failureThreshold: 30
 
+configmapReload:
+  prometheus:
+    enabled: false
+
 alertmanager:
   image:
     repository: quay.io/prometheus/alertmanager
