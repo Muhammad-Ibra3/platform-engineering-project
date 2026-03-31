@@ -4,7 +4,6 @@ metadata:
   name: {{ .Release.Name }}
   labels:
     app: {{ .Release.Name }}
-{{- $servicePorts := .Values.service.ports | default (list (dict "name" "http" "port" (.Values.service.port | default 80) "targetPort" (.Values.service.targetPort | default (.Values.service.port | default 80)))) -}}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -20,7 +19,7 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            {{- range $servicePorts }}
+            {{- range .Values.service.ports }}
             - name: {{ .name }}
               containerPort: {{ .targetPort }}
               protocol: TCP

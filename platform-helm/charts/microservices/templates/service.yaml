@@ -4,12 +4,10 @@ metadata:
   name: {{ .Release.Name }}
   labels:
     app: {{ .Release.Name }}
-{{- $serviceType := .Values.service.type | default "ClusterIP" -}}
-{{- $servicePorts := .Values.service.ports | default (list (dict "name" "http" "port" (.Values.service.port | default 80) "targetPort" (.Values.service.targetPort | default (.Values.service.port | default 80)))) -}}
 spec:
-  type: {{ $serviceType }}
+  type: {{ .Values.service.type }}
   ports:
-    {{- range $servicePorts }}
+    {{- range .Values.service.ports }}
     - port: {{ .port }}
       targetPort: {{ .targetPort }}
       protocol: TCP
