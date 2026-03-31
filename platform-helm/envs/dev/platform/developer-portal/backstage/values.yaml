@@ -85,20 +85,20 @@ backstage:
     #           resolvers:
     #             - resolver: preferredUsernameMatchingUserEntityName
     #             - resolver: emailMatchingUserEntityProfileEmail
-    catalog:
-      locations:
-        - type: url
-          target: https://github.com/Muhammad-Ibra3/platform-engineering-project/blob/main/platform-backstage/catalog/entities.yaml
-          rules:
-            - allow:
-                - Group
-                - User
-                - Location
-                - Component
-                - System
-                - API
-                - Resource
-                - Domain
+    # catalog:
+    #   locations:
+    #     - type: url
+    #       target: https://github.com/Muhammad-Ibra3/platform-engineering-project/blob/main/platform-backstage/catalog/entities.yaml
+    #       rules:
+    #         - allow:
+    #             - Group
+    #             - User
+    #             - Location
+    #             - Component
+    #             - System
+    #             - API
+    #             - Resource
+    #             - Domain
     integrations:
       github:
         - host: github.com
