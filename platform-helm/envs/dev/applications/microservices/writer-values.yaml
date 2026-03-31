@@ -7,7 +7,7 @@ env:
   LOG_LEVEL: "debug"
   KAFKA_BROKERS: "kafka.message-broker.svc.cluster.local:9092"
   PROMETHEUS_URL: "http://prometheus-server.observability.svc.cluster.local"
-  JAEGER_HOST: "jaeger.observability.svc.cluster.local"
+  JAEGER_HOST: "jaeger.observability.svc.cluster.local:6831"
   POSTGRES_HOST: "postgresql.database.svc.cluster.local"
   POSTGRES_PORT: "5432"
   POSTGRES_DB: "products"
