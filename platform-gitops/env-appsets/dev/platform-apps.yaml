@@ -78,11 +78,11 @@ spec:
             valuesPath: platform-helm/envs/dev/platform/observability/jaeger/values.yaml
             syncWave: "4"
 
-          - name: kubecost
-            chartPath: platform-helm/charts/external/kubecost
-            targetNamespace: finops
-            valuesPath: platform-helm/envs/dev/platform/finops/kubecost/values.yaml
-            syncWave: "5"
+          # - name: kubecost
+          #   chartPath: platform-helm/charts/external/kubecost
+          #   targetNamespace: finops
+          #   valuesPath: platform-helm/envs/dev/platform/finops/kubecost/values.yaml
+          #   syncWave: "5"
 
   template:
     metadata:
