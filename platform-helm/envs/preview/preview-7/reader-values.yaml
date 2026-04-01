@@ -1,40 +1,37 @@
 image:
-  repository: "016257615702.dkr.ecr.us-east-1.amazonaws.com/writer"
+  repository: "016257615702.dkr.ecr.us-east-1.amazonaws.com/reader"
   tag: "5e79e3e031d07d3b8613c7a8970af1b60e7ade5e"
 env:
-  GRPC_PORT: ":5000"
+  GRPC_PORT: ":5001"
   LOG_LEVEL: "debug"
   KAFKA_BROKERS: "kafka.message-broker.svc.cluster.local:9092"
   PROMETHEUS_URL: "http://prometheus-server.observability.svc.cluster.local"
+  JAEGER_HOST: "jaeger.observability.svc.cluster.local:6831"
+  MONGO_DB: "products"
+  REDIS_ADDR: "redis.database.svc.cluster.local:6379"
   POSTGRES_HOST: "postgresql.database.svc.cluster.local"
   POSTGRES_PORT: "5432"
-  POSTGRES_DB: "products"
-  POSTGRES_USER: "postgres"
-  REDIS_ADDR: "redis.database.svc.cluster.local:6379"
 secretEnv:
-  POSTGRES_PASSWORD:
-    secretName: writer-db-secret
-    secretKey: POSTGRES_PASSWORD
   MONGO_URI:
     secretName: mongo-uri-secret
     secretKey: MONGO_URI
 livenessProbe:
   tcpSocket:
-    port: 5000
+    port: 5001
   initialDelaySeconds: 20
   periodSeconds: 10
   timeoutSeconds: 2
   failureThreshold: 3
 readinessProbe:
   tcpSocket:
-    port: 5000
+    port: 5001
   initialDelaySeconds: 10
   periodSeconds: 5
   timeoutSeconds: 2
   failureThreshold: 3
 startupProbe:
   tcpSocket:
-    port: 5000
+    port: 5001
   periodSeconds: 5
   timeoutSeconds: 2
   failureThreshold: 24
