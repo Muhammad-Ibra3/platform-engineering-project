@@ -16,22 +16,69 @@ falcosidekick:
   webui:
     enabled: true
     replicaCount: 1
+    disableauth: true
     ingress:
-      enabled: true
-      ingressClassName: traefik
-      annotations:
-        cert-manager.io/cluster-issuer: letsencrypt-route53-dns01
-        external-dns.alpha.kubernetes.io/target: "18.234.67.136"
-      hosts:
-        - host: falco-sidekick.dev.myplatformproject.com
-          paths:
-            - path: /
-      tls:
-        - secretName: falco-sidekick-dev-myplatformproject-com-tls
-          hosts:
-            - falco-sidekick.dev.myplatformproject.com
+      enabled: false
 
-customRules: {}
+customRules:
+  rules-platform-dev.yaml: |-
+    # Namespaces where admin/debug behavior is expected and usually noisy.
+    - list: platform_trusted_namespaces
+      items: [kube-system, observability, security, cert-manager, external-dns, argocd]
+
+    # Keep policy scope on application workloads to reduce false positives.
+    - macro: platform_user_workload_container
+      condition: container and not k8s.ns.name in (platform_trusted_namespaces)
+
+    - macro: platform_microservices_workload
+      condition: container and k8s.ns.name=dev-microservices
+
+    - list: platform_interactive_shell_binaries
+      items: [bash, sh, zsh, ksh, ash, dash, fish]
+
+    - list: platform_package_manager_binaries
+      items: [apt, apt-get, apk, yum, dnf, zypper, rpm, dpkg]
+
+    - list: platform_sensitive_write_paths
+      items: [/etc, /usr/bin, /usr/sbin, /bin, /sbin, /root/.ssh, /etc/kubernetes]
+
+    # Temporary per-workload allowlists for known debugging workflows.
+    - macro: platform_api_gateway_workload
+      condition: k8s.ns.name=dev-microservices and (k8s.pod.name startswith api-gateway or container.name=api-gateway)
+
+    - macro: platform_reader_workload
+      condition: k8s.ns.name=dev-microservices and (k8s.pod.name startswith reader or container.name=reader)
+
+    - macro: platform_debug_allowlisted_workloads
+      condition: platform_api_gateway_workload or platform_reader_workload
+
+    - rule: Platform - Interactive shell in app container
+      desc: Detect interactive shell execution in non-platform Kubernetes namespaces
+      condition: spawned_process and platform_user_workload_container and not platform_debug_allowlisted_workloads and proc.name in (platform_interactive_shell_binaries)
+      output: Interactive shell in container (user=%user.name ns=%k8s.ns.name pod=%k8s.pod.name container=%container.name proc=%proc.name cmd=%proc.cmdline)
+      priority: WARNING
+      tags: [platform, k8s, container, execution, mitre_execution]
+
+    - rule: Platform - Package manager executed in app container
+      desc: Detect package manager usage in non-platform namespaces, often indicating drift or live tampering
+      condition: spawned_process and platform_user_workload_container and not platform_debug_allowlisted_workloads and proc.name in (platform_package_manager_binaries)
+      output: Package manager execution in container (user=%user.name ns=%k8s.ns.name pod=%k8s.pod.name container=%container.name proc=%proc.name cmd=%proc.cmdline)
+      priority: NOTICE
+      tags: [platform, k8s, container, drift, mitre_persistence]
+
+    - rule: Platform - Write below sensitive paths in app container
+      desc: Detect writes to common sensitive filesystem paths from app containers
+      condition: open_write and platform_user_workload_container and fd.name startswith / and fd.name pmatch (platform_sensitive_write_paths)
+      output: Sensitive path write in container (user=%user.name ns=%k8s.ns.name pod=%k8s.pod.name container=%container.name file=%fd.name proc=%proc.name cmd=%proc.cmdline)
+      priority: WARNING
+      tags: [platform, k8s, container, filesystem, mitre_defense_evasion]
+
+    - rule: Platform - Root process in microservices container
+      desc: Detect processes running as root inside microservices workloads expected to run as non-root
+      condition: spawned_process and platform_microservices_workload and user.uid=0 and proc.name!=pause
+      output: Root process in microservice container (user=%user.name uid=%user.uid ns=%k8s.ns.name pod=%k8s.pod.name container=%container.name proc=%proc.name cmd=%proc.cmdline)
+      priority: WARNING
+      tags: [platform, k8s, microservices, least_privilege, mitre_privilege_escalation]
 
 resources:
   requests:
