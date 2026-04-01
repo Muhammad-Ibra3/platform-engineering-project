@@ -1,0 +1,179 @@
+name: Promote Helm microservice image tags
+
+on:
+  workflow_call:
+    inputs:
+      source_dir:
+        required: true
+        type: string
+        description: Directory with *-values.yaml (e.g. platform-helm/envs/preview/preview-12)
+      dest_dir:
+        required: true
+        type: string
+        description: Target microservices values directory
+      floating_tag:
+        required: true
+        type: string
+        description: Moving ECR tag for the same digest as image.tag (e.g. dev-latest, prod-latest)
+      checkout_ref:
+        required: false
+        type: string
+        default: main
+        description: Git ref to checkout before editing (use merge commit SHA for post-merge promotion)
+      aws_region:
+        required: false
+        type: string
+        default: us-east-1
+        description: AWS region for OIDC credentials (ECR login also uses each image's region)
+      services:
+        required: false
+        type: string
+        default: "[]"
+        description: JSON array of Helm service names; empty discovers *-values.yaml under source_dir
+    secrets:
+      AWS_ROLE:
+        required: true
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.checkout_ref }}
+          fetch-depth: 0
+
+      - uses: mikefarah/yq@v4.44.3
+
+      - name: Install jq
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y jq
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          aws-region: ${{ inputs.aws_region }}
+
+      - name: Copy immutable tags to destination and retag ECR
+        env:
+          SOURCE_DIR: ${{ inputs.source_dir }}
+          DEST_DIR: ${{ inputs.dest_dir }}
+          FLOATING_TAG: ${{ inputs.floating_tag }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          services_json='${{ inputs.services }}'
+          if ! echo "$services_json" | jq -e 'type == "array"' >/dev/null; then
+            echo "services must be a JSON array"
+            exit 1
+          fi
+
+          if [ "$(echo "$services_json" | jq 'length')" -eq 0 ]; then
+            if [ ! -d "$SOURCE_DIR" ]; then
+              echo "Source directory missing (nothing to promote): $SOURCE_DIR"
+              exit 0
+            fi
+            services_json="$(find "$SOURCE_DIR" -maxdepth 1 -name '*-values.yaml' -print | sed 's|.*/||; s/-values\.yaml$//' | sort -u | jq -R -s -c 'split("\n") | map(select(length > 0))')"
+            if [ "$services_json" = "[]" ]; then
+              echo "No service values under $SOURCE_DIR; nothing to promote."
+              exit 0
+            fi
+          fi
+
+          parse_ecr() {
+            local uri="$1"
+            local host="${uri%%/*}"
+            local name="${uri##*/}"
+            local region
+            region="$(echo "$host" | sed -n 's/.*dkr\.ecr\.\([^.]*\)\.amazonaws\.com/\1/p')"
+            if [ -z "$region" ]; then
+              echo "Could not parse ECR region from: $uri" >&2
+              exit 1
+            fi
+            echo "$region|$host|$name"
+          }
+
+          last_ecr_region=""
+          ecr_docker_login() {
+            local region="$1"
+            local host="$2"
+            if [ "$region" = "$last_ecr_region" ]; then
+              return 0
+            fi
+            aws ecr get-login-password --region "$region" | docker login --username AWS --password-stdin "$host"
+            last_ecr_region="$region"
+          }
+
+          while read -r service; do
+            [ -z "$service" ] && continue
+            src="${SOURCE_DIR}/${service}-values.yaml"
+            dst="${DEST_DIR}/${service}-values.yaml"
+            if [ ! -f "$src" ]; then
+              echo "Missing source values: $src"
+              exit 1
+            fi
+            if [ ! -f "$dst" ]; then
+              echo "Missing destination values: $dst"
+              exit 1
+            fi
+
+            tag="$(yq '.image.tag' "$src")"
+            if [ -z "$tag" ] || [ "$tag" = "null" ]; then
+              echo "No .image.tag in $src"
+              exit 1
+            fi
+
+            repo_uri="$(yq '.image.repository // ""' "$dst")"
+            if [ -z "$repo_uri" ] || [ "$repo_uri" = "null" ]; then
+              repo_uri="$(yq '.image.repository // ""' "$src")"
+            fi
+            if [ -z "$repo_uri" ] || [ "$repo_uri" = "null" ]; then
+              echo "No .image.repository in $src or $dst"
+              exit 1
+            fi
+
+            IFS='|' read -r aws_region registry_host ecr_repo <<< "$(parse_ecr "$repo_uri")"
+            export AWS_DEFAULT_REGION="$aws_region"
+
+            echo "Promoting $service: tag=$tag repo=$ecr_repo floating=$FLOATING_TAG"
+
+            export tag
+            yq -i '.image.tag = strenv(tag)' "$dst"
+
+            ecr_docker_login "$aws_region" "$registry_host"
+
+            docker pull "${registry_host}/${ecr_repo}:${tag}"
+            docker tag "${registry_host}/${ecr_repo}:${tag}" "${registry_host}/${ecr_repo}:${FLOATING_TAG}"
+            docker push "${registry_host}/${ecr_repo}:${FLOATING_TAG}"
+          done < <(echo "$services_json" | jq -r '.[]')
+
+      - name: Commit and push GitOps values
+        shell: bash
+        env:
+          DEST_DIR: ${{ inputs.dest_dir }}
+          FLOATING_TAG: ${{ inputs.floating_tag }}
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+
+          git add "$DEST_DIR"
+
+          if git diff --staged --quiet; then
+            echo "No Helm value changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Promote microservices to ${FLOATING_TAG%%-*} (${FLOATING_TAG}) [skip ci]"
+          git pull --rebase origin main
+          git push origin HEAD:main
