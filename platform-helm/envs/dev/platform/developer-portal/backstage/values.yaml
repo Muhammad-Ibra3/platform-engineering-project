@@ -72,19 +72,19 @@ backstage:
           user: ${POSTGRES_USER}
           password: ${POSTGRES_PASSWORD}
           database: ${POSTGRES_DB}
-    # auth:
-    #   environment: production
-    #   providers:
-    #     oidc:
-    #       production:
-    #         metadataUrl: https://keycloak.dev.myplatformproject.com/realms/backstage/.well-known/openid-configuration
-    #         clientId: backstage
-    #         clientSecret: ${AUTH_KEYCLOAK_CLIENT_SECRET}
-    #         prompt: auto
-    #         signIn:
-    #           resolvers:
-    #             - resolver: preferredUsernameMatchingUserEntityName
-    #             - resolver: emailMatchingUserEntityProfileEmail
+    auth:
+      environment: production
+      providers:
+        oidc:
+          production:
+            metadataUrl: https://keycloak.dev.myplatformproject.com/realms/platform/.well-known/openid-configuration
+            clientId: backstage
+            clientSecret: ${AUTH_KEYCLOAK_CLIENT_SECRET}
+            prompt: auto
+            signIn:
+              resolvers:
+                - resolver: preferredUsernameMatchingUserEntityName
+                - resolver: emailMatchingUserEntityProfileEmail
     # catalog:
     #   locations:
     #     - type: url
