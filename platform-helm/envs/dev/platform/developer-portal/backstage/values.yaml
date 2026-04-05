@@ -77,16 +77,20 @@ backstage:
       providers:
         guest:
           dangerouslyAllowOutsideDevelopment: true
-        oidc:
-          production:
-            metadataUrl: https://keycloak.dev.myplatformproject.com/realms/platform/.well-known/openid-configuration
-            clientId: backstage
-            clientSecret: ${AUTH_KEYCLOAK_CLIENT_SECRET}
-            prompt: auto
-            signIn:
-              resolvers:
-                - resolver: preferredUsernameMatchingUserEntityName
-                - resolver: emailMatchingUserEntityProfileEmail
+    # OIDC (Keycloak) disabled while testing revert of bc02ffe; re-enable when ready.
+    # auth:
+    #   environment: production
+    #   providers:
+    #     oidc:
+    #       production:
+    #         metadataUrl: https://keycloak.dev.myplatformproject.com/realms/platform/.well-known/openid-configuration
+    #         clientId: backstage
+    #         clientSecret: ${AUTH_KEYCLOAK_CLIENT_SECRET}
+    #         prompt: auto
+    #         signIn:
+    #           resolvers:
+    #             - resolver: preferredUsernameMatchingUserEntityName
+    #             - resolver: emailMatchingUserEntityProfileEmail
     catalog:
       locations:
         - type: url

@@ -32,12 +32,6 @@ spec:
             valuesPath: platform-helm/envs/dev/platform/secrets/vault/values.yaml
             syncWave: "0"
 
-          - name: external-secrets
-            chartPath: platform-helm/charts/external/external-secrets
-            targetNamespace: secrets
-            valuesPath: platform-helm/envs/dev/platform/secrets/external-secrets/values.yaml
-            syncWave: "1"
-
           - name: keycloak
             chartPath: platform-helm/charts/external/keycloak
             targetNamespace: identity
