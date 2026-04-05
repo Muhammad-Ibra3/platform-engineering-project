@@ -51,13 +51,19 @@ ingress:
   ingressClassName: traefik
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-route53-dns01
-    external-dns.alpha.kubernetes.io/target: "18.234.67.136"
+    external-dns.alpha.kubernetes.io/target: "34.228.167.63"
   hosts:
     - grafana.dev.myplatformproject.com
   tls:
     - secretName: grafana-dev-myplatformproject-com-tls
       hosts:
         - grafana.dev.myplatformproject.com
+
+sidecar:
+  dashboards:
+    enabled: true
+    label: grafana_dashboard
+    labelValue: "1"
 
 datasources:
   datasources.yaml:

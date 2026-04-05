@@ -40,9 +40,16 @@ hubble:
       - "drop"
       - "tcp"
       - "flow"
+      # Legacy HTTP metrics for Grafana isovalent-hubble-datasource compatibility; httpV2 is primary.
+      - "http:sourceContext=workload-name|pod-name|reserved-identity;destinationContext=workload-name|pod-name|reserved-identity;labelsContext=source_namespace,destination_namespace,traffic_direction"
       - "httpV2:sourceContext=workload-name|pod-name|reserved-identity;destinationContext=workload-name|pod-name|reserved-identity;labelsContext=source_namespace,destination_namespace,traffic_direction"
     serviceMonitor:
       enabled: false
+    dashboards:
+      enabled: true
+      namespace: observability
+      label: grafana_dashboard
+      labelValue: "1"
   relay:
     enabled: true
     prometheus:
@@ -56,7 +63,7 @@ hubble:
       className: traefik
       annotations:
         cert-manager.io/cluster-issuer: letsencrypt-route53-dns01
-        external-dns.alpha.kubernetes.io/target: "18.234.67.136"
+        external-dns.alpha.kubernetes.io/target: "34.228.167.63"
       hosts:
         - hubble.dev.myplatformproject.com
       tls:

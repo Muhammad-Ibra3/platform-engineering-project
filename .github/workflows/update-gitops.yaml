@@ -104,7 +104,7 @@ jobs:
             .ingress.enabled = true |
             .ingress.className = "traefik" |
             .ingress.annotations."cert-manager.io/cluster-issuer" = "letsencrypt-route53-dns01" |
-            .ingress.annotations."external-dns.alpha.kubernetes.io/target" = "18.234.67.136" |
+            .ingress.annotations."external-dns.alpha.kubernetes.io/target" = "34.228.167.63" |
             .ingress.hosts = [{"host": strenv(PREVIEW_HOST), "paths": [{"path": "/", "pathType": "Prefix"}]}] |
             .ingress.tls = [{"secretName": strenv(PREVIEW_TLS_SECRET), "hosts": [strenv(PREVIEW_HOST)]}]
           ' "$api_dst"
