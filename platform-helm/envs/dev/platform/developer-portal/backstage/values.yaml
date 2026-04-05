@@ -75,6 +75,8 @@ backstage:
     auth:
       environment: production
       providers:
+        guest:
+          dangerouslyAllowOutsideDevelopment: true
         oidc:
           production:
             metadataUrl: https://keycloak.dev.myplatformproject.com/realms/platform/.well-known/openid-configuration
@@ -103,6 +105,7 @@ backstage:
       github:
         - host: github.com
           token: ${GITHUB_TOKEN}
+    techdocs:
       builder: local
       generator:
         runIn: local
